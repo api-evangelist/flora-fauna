@@ -1,0 +1,94 @@
+aid: flora-fauna
+name: FLORA
+description: >-
+  FLORA is a Brooklyn, New York-based applied AI / HCI company building a
+  browser-based "infinite canvas" creative workspace for professional
+  creators. Founded in 2024 by Weber Wong out of NYU's Interactive
+  Telecommunications Program (ITP), FLORA unifies 50+ third-party text,
+  image, and video AI models inside a single node-based visual workspace
+  where designers, filmmakers, photographers, and creative agencies wire
+  prompts, references, characters, and outputs into reusable generative
+  workflows. The platform integrates leading image models (FLUX.2, FLUX
+  Kontext, Stable Diffusion 3.5, Nano Banana, Recraft, Seedream, Minimax
+  Hailuo) and video models (Veo 3, Sora 2, Runway Gen-4 Turbo / Gen-3 Alpha
+  / Act-Two, Pika, Kling, Luma Ray 2, Seedance, Marey) alongside reasoning
+  models such as Gemini 3 Pro and GPT-5.4, and ships a creative agent named
+  FAUNA for ideation, iteration, and workflow scaffolding. FLORA is used at
+  agencies and studios including Pentagram, Milk, and MSCHF; the company
+  raised a $6.5M seed led by Mike Volpi at Hanabi Capital with Menlo
+  Ventures, a16z Games Speedrun, Long Journey Ventures, Company Ventures,
+  Alumni Ventures, Embedding VC, and angels including Justin Kan (Twitch)
+  and Gabe Whaley (MSCHF), and operates in-person from the Domino Refinery
+  in Williamsburg. The product is sold direct to creative professionals via
+  a free tier and paid subscription (Pro from ~$16/month); there is no
+  public developer API, SDK, or open-source release — FLORA's surface
+  area is the in-app canvas and FAUNA agent, with model access mediated
+  by the platform rather than exposed to third-party developers.
+type: Index
+position: Provider
+access: 3rd-Party
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - Creative AI
+  - Generative AI
+  - Infinite Canvas
+  - Node-Based Workflows
+  - Creative Workspace
+  - Image Generation
+  - Video Generation
+  - Text-to-Image
+  - Text-to-Video
+  - AI Agents
+  - Multimodal AI
+  - Design Tools
+  - Creative Professionals
+  - Advertising
+  - Film
+  - Fashion
+  - Branding
+  - VFX
+  - Photography
+  - Architecture
+  - Motion Design
+  - FAUNA
+url: https://raw.githubusercontent.com/api-evangelist/flora-fauna/refs/heads/main/apis.yml
+created: '2026-05-25'
+modified: '2026-05-25'
+specificationVersion: '0.20'
+apis: []
+common:
+  - type: Website
+    url: https://www.florafauna.ai
+  - type: Application
+    url: https://app.florafauna.ai
+  - type: Documentation
+    url: https://docs.florafauna.ai
+  - type: Blog
+    url: https://flora.ai/blog
+  - type: Community
+    url: https://app.florafauna.ai/community
+  - type: Careers
+    url: https://flora.ai/careers
+  - type: JobBoard
+    url: https://jobs.ashbyhq.com/FLORA
+  - type: Brand
+    url: https://flora.ai/brand
+  - type: Status
+    url: https://status.flora.ai
+  - type: Support
+    url: mailto:support@florafauna.ai
+  - type: PrivacyPolicy
+    url: https://flora.ai/legal/privacy-policy
+  - type: TermsOfService
+    url: https://flora.ai/legal/terms-of-service
+  - type: Twitter
+    url: https://twitter.com/florafaunaai
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/floraai
+  - type: YouTube
+    url: https://www.youtube.com/@florafaunaai
+  - type: FoundingAnnouncement
+    url: https://flora.ai/blog/flora-raises-6-5m-to-build-the-world-s-most-powerful-creative-tool
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
