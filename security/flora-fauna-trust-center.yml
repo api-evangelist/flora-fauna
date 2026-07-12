@@ -1,0 +1,13 @@
+generated: '2026-07-11'
+method: searched
+probe: true
+source: https://trust.flora.ai/
+url: https://trust.flora.ai/
+certifications:
+- SOC 2
+evidence:
+- source: https://trust.flora.ai/
+  keywords:
+  - soc 2
+  - soc2
+  - trust center
