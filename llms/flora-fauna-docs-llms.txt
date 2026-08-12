@@ -1,0 +1,138 @@
+# Fetched by API Evangelist from https://docs.flora.ai/llms.txt on 2026-08-12 (HTTP 200). Saved verbatim below.
+
+# FLORA Docs
+
+## FLORA Docs
+
+- [Welcome to FLORA Docs](https://docs.flora.ai/getting-started/readme.md)
+- [Help & Support](https://docs.flora.ai/getting-started/help-and-support.md)
+- [Quickstart](https://docs.flora.ai/getting-started/quickstart.md): FLORA philosophy, creative process, and how to get started!
+- [FLORA Concepts](https://docs.flora.ai/getting-started/publish-your-docs.md): An introduction to FLORA and our core concepts:
+- [Manifesto](https://docs.flora.ai/getting-started/publish-your-docs/manifesto.md)
+- [Our Product Philosophy](https://docs.flora.ai/getting-started/publish-your-docs/our-product-philosophy.md): High level conceptualization of FLORA as a creative tool.
+- [Node Overview](https://docs.flora.ai/nodes/editor.md): In FLORA, Nodes are the core creative units — connect them to build your workflows.
+- [Text Node](https://docs.flora.ai/nodes/text-node.md): Learn the basics of text nodes
+- [Text to Text](https://docs.flora.ai/nodes/text-node/text-to-text.md)
+- [Image to Text](https://docs.flora.ai/nodes/text-node/image-to-text.md)
+- [Video to Text](https://docs.flora.ai/nodes/text-node/video-to-text.md)
+- [Audio to Text](https://docs.flora.ai/nodes/text-node/audio-to-text.md)
+- [Image Node](https://docs.flora.ai/nodes/image-node.md): Learn the basics of image nodes
+- [Text to Image](https://docs.flora.ai/nodes/image-node/text-to-image.md)
+- [Image to Image](https://docs.flora.ai/nodes/image-node/image-to-image.md)
+- [Video Node](https://docs.flora.ai/nodes/video-node.md): Learn the basics of video nodes
+- [Text to Video](https://docs.flora.ai/nodes/video-node/text-to-video.md)
+- [Image(s) to Video](https://docs.flora.ai/nodes/video-node/image-s-to-video.md)
+- [Audio to Video](https://docs.flora.ai/nodes/video-node/audio-to-video.md)
+- [Audio Node](https://docs.flora.ai/nodes/audio-node.md): Learn the basics of audio nodes
+- [Text to Audio](https://docs.flora.ai/nodes/audio-node/text-to-video.md): Text-to-Audio generates sound from a text prompt, letting you create voiceovers, sound effects, and music tracks directly on the canvas
+- [Document Node](https://docs.flora.ai/nodes/document-node.md): Learn the basics of document nodes
+- [PDF to Text](https://docs.flora.ai/nodes/document-node/pdf-to-text.md)
+- [PDF to Image](https://docs.flora.ai/nodes/document-node/pdf-to-image.md)
+- [Layer Editor](https://docs.flora.ai/nodes/layer-editor.md): Compose multiple images into a single layered composition
+- [Action Node](https://docs.flora.ai/nodes/action-node.md): Traditional editing tools that plug directly into your canvas workflows
+- [Custom Actions](https://docs.flora.ai/nodes/custom-actions.md): Describe the tool you wish existed, and FLORA builds it for your canvas
+- [Batch Node](https://docs.flora.ai/nodes/batch-node.md): Process multiple items through the same generation workflow
+- [Export Node](https://docs.flora.ai/nodes/export-node.md): Save and export your generated media to local downloads or Google Drive, and import files from Drive
+- [Router Node](https://docs.flora.ai/nodes/router-node.md): Route one set of inputs out to many nodes with a single connection
+- [Techniques](https://docs.flora.ai/nodes/techniques.md): Pre-built AI workflows that combine multiple generation steps into reusable templates
+- [Technique Builder](https://docs.flora.ai/nodes/technique-builder.md): Turn any canvas workflow into a reusable, shareable Technique
+- [Editor](https://docs.flora.ai/editor/editor.md)
+- [Canvas](https://docs.flora.ai/editor/canvas.md)
+- [Toolbar](https://docs.flora.ai/editor/toolbar.md)
+- [Image Editing](https://docs.flora.ai/editor/image-editing.md)
+- [Timeline Editor](https://docs.flora.ai/editor/timeline-editor.md): Trim, sequence, caption, and render your clips into a finished video on the canvas
+- [Navigation](https://docs.flora.ai/editor/navigation.md)
+- [Collaboration & Sharing](https://docs.flora.ai/editor/collaboration-and-sharing.md)
+- [FAUNA](https://docs.flora.ai/editor/fauna.md)
+- [Elements](https://docs.flora.ai/editor/elements.md)
+- [Fashion Studio](https://docs.flora.ai/studios/fashion-studio.md): A focused workspace for fashion teams — turn sketches into renders, swap colors and garments, and review everything in one feed.
+- [Text Models](https://docs.flora.ai/models/text-models.md)
+- [Claude Sonnet 4.5 (by Anthropic)](https://docs.flora.ai/models/text-models/claude-sonnet-4.5-by-anthropic.md)
+- [Claude Opus 4.5 (by Anthropic)](https://docs.flora.ai/models/text-models/claude-opus-4.5-by-anthropic.md)
+- [GPT-5 (by OpenAI)](https://docs.flora.ai/models/text-models/gpt-5-by-openai.md)
+- [GPT-5.1 (by OpenAI)](https://docs.flora.ai/models/text-models/gpt-5.1-by-openai.md)
+- [GPT-5.2 (by OpenAI)](https://docs.flora.ai/models/text-models/gpt-5.2-by-openai.md)
+- [o3 Deep Research (by OpenAI)](https://docs.flora.ai/models/text-models/o3-deep-research-by-openai.md)
+- [Image Models](https://docs.flora.ai/models/image-models.md)
+- [Flux Dev (by Black Forest Labs)](https://docs.flora.ai/models/image-models/flux-dev-by-black-forest-labs.md)
+- [GPT-Image (by OpenAI)](https://docs.flora.ai/models/image-models/gpt-image-by-openai.md)
+- [Nano Banana (Gemini 2.5 Flash Image) (by Google)](https://docs.flora.ai/models/image-models/nano-banana-gemini-2.5-flash-image-by-google.md)
+- [Seedream 4.0 (by Bytedance)](https://docs.flora.ai/models/image-models/seedream-4.0-by-bytedance.md)
+- [Seedream 4.5 (by Bytedance)](https://docs.flora.ai/models/image-models/seedream-4.5-by-bytedance.md)
+- [Magnific Upscaler & Enhancer](https://docs.flora.ai/models/image-models/magnific-upscaler-and-enhancer.md)
+- [Topaz](https://docs.flora.ai/models/image-models/topaz.md)
+- [Flux Kontext Max (by Black Forest Labs)](https://docs.flora.ai/models/image-models/flux-kontext-max-by-black-forest-labs.md)
+- [Flux Pro (by Black Forest Labs)](https://docs.flora.ai/models/image-models/flux-pro-by-black-forest-labs.md)
+- [Flux Redux (by Black Forest Labs)](https://docs.flora.ai/models/image-models/flux-redux-by-black-forest-labs.md)
+- [Ideogram 3.0](https://docs.flora.ai/models/image-models/ideogram-3.0.md)
+- [Ideogram Character](https://docs.flora.ai/models/image-models/ideogram-character.md)
+- [Luma Photon](https://docs.flora.ai/models/image-models/luma-photon.md)
+- [GPT Image 1.5 (by OpenAI)](https://docs.flora.ai/models/image-models/gpt-image-1.5-by-openai.md)
+- [Imagen 4 (by Google)](https://docs.flora.ai/models/image-models/imagen-4-by-google.md)
+- [Wan 2.2 (by Alibaba)](https://docs.flora.ai/models/image-models/wan-2.2-by-alibaba.md)
+- [Recraft V3](https://docs.flora.ai/models/image-models/recraft-v3.md)
+- [Stable Diffusion 3.5](https://docs.flora.ai/models/image-models/stable-diffusion-3.5.md)
+- [Nano Banana Pro (by Google)](https://docs.flora.ai/models/image-models/nano-banana-pro-by-google.md)
+- [Z-Image Turbo (by Alibaba)](https://docs.flora.ai/models/image-models/z-image-turbo-by-alibaba.md)
+- [Kling O1](https://docs.flora.ai/models/image-models/kling-o1.md)
+- [Qwen Image Edit Plus](https://docs.flora.ai/models/image-models/qwen-image-edit-plus.md)
+- [Qwen Image Edit Angles](https://docs.flora.ai/models/image-models/qwen-image-edit-angles.md)
+- [Flux 2 (by Black Forest Labs)](https://docs.flora.ai/models/image-models/flux-2-by-black-forest-labs.md)
+- [Flux 2 Max (by Black Forest Labs)](https://docs.flora.ai/models/image-models/flux-2-max-by-black-forest-labs.md)
+- [Flux 2 Flex (by Black Forest Labs)](https://docs.flora.ai/models/image-models/flux-2-flex-by-black-forest-labs.md)
+- [Flux 2 Pro (by Black Forest Labs)](https://docs.flora.ai/models/image-models/flux-2-pro-by-black-forest-labs.md)
+- [Imagen 3 (by Google)](https://docs.flora.ai/models/image-models/imagen-3-by-google.md)
+- [Video Models](https://docs.flora.ai/models/video-models.md)
+- [Veo 3.1 (by Google)](https://docs.flora.ai/models/video-models/veo-3.1-by-google.md)
+- [Veo 3 (by Google)](https://docs.flora.ai/models/video-models/veo-3-by-google.md)
+- [Sora 2 Pro (by OpenAI)](https://docs.flora.ai/models/video-models/sora-2-pro-by-openai.md)
+- [Kling 2.6 Pro (by Kuaishou)](https://docs.flora.ai/models/video-models/kling-2.6-pro-by-kuaishou.md)
+- [Kling 2.5 Turbo Pro (by Kuaishou)](https://docs.flora.ai/models/video-models/kling-2.5-turbo-pro-by-kuaishou.md)
+- [Kling 2.1 Master (by Kuaishou)](https://docs.flora.ai/models/video-models/kling-2.1-master-by-kuaishou.md)
+- [Kling O1 (by Kuaishou)](https://docs.flora.ai/models/video-models/kling-o1-by-kuaishou.md)
+- [Seedance (by Bytedance)](https://docs.flora.ai/models/video-models/seedance-by-bytedance.md)
+- [LTX-2 Pro (by Lightricks)](https://docs.flora.ai/models/video-models/ltx-2-pro-by-lightricks.md)
+- [Luma Ray 2 (by Luma)](https://docs.flora.ai/models/video-models/luma-ray-2-by-luma.md)
+- [Pika (by Pika)](https://docs.flora.ai/models/video-models/pika-by-pika.md)
+- [Minimax Hailuo (by Minimax)](https://docs.flora.ai/models/video-models/minimax-hailuo-by-minimax.md)
+- [Tencent Hunyuan (by Tencent)](https://docs.flora.ai/models/video-models/tencent-hunyuan-by-tencent.md)
+- [WAN 2.6 (by Alibaba)](https://docs.flora.ai/models/video-models/wan-2.6-by-alibaba.md)
+- [Marey (by Moonvalley)](https://docs.flora.ai/models/video-models/marey-by-moonvalley.md)
+- [Audio Models](https://docs.flora.ai/models/audio-models.md)
+- [How Pricing Works](https://docs.flora.ai/plans-and-billing/pricing.md)
+- [Model Pricing](https://docs.flora.ai/plans-and-billing/model-pricing.md)
+- [Pricing Breakdown by Parameter](https://docs.flora.ai/plans-and-billing/parameter-pricing.md)
+- [Launch Bonus](https://docs.flora.ai/plans-and-billing/launch-bonus.md)
+- [Pricing FAQ](https://docs.flora.ai/plans-and-billing/faq.md)
+- [Manage Subscription](https://docs.flora.ai/plans-and-billing/manage-subscription.md)
+- [Organizations](https://docs.flora.ai/organizations/organizations.md): How organizations, workspaces, seats, and shared billing work in FLORA
+- [Workspaces](https://docs.flora.ai/faqs-how-to.../workspaces.md)
+- [Styles (deprecated)](https://docs.flora.ai/faqs-how-to.../styles.md)
+- [Unsplash](https://docs.flora.ai/faqs-how-to.../unsplash.md): FLORA's Unsplash integration provides access to a vast library of free, high-quality images within the FLORA editor.
+- [Common Use Cases / FAQs](https://docs.flora.ai/faqs-how-to.../common-use-cases-faqs.md)
+- [Tips & Tricks](https://docs.flora.ai/faqs-how-to.../tips-and-tricks.md): Short video tutorials covering common workflows and creative techniques in FLORA.
+- [Community](https://docs.flora.ai/more/community.md)
+- [Export to Shopify](https://docs.flora.ai/more/export-to-shopify.md): Publish generated product visuals straight from your canvas to your Shopify store
+- [API](https://docs.flora.ai/more/api.md)
+- [Public API Reference](https://docs.flora.ai/more/flora-public-api-reference.md)
+- [FLORA API](https://docs.flora.ai/more/api-getting-started.md)
+- [FLORA MCP](https://docs.flora.ai/more/mcp.md): Connect FLORA to Claude Code, Claude Desktop, Cursor, and other MCP clients.
+- [Education](https://docs.flora.ai/more/education.md)
+- [Privacy Policy](https://docs.flora.ai/legal/privacy-policy.md)
+- [Data, Security, & IP](https://docs.flora.ai/legal/data-security-and-ip.md)
+
+
+---
+
+# Agent Instructions
+This documentation is published with GitBook. GitBook is the documentation platform designed so that both humans and AI agents can read, navigate, and reason over technical content effectively. Learn more at gitbook.com.
+
+## Querying This Documentation
+If you need additional information, you can query the documentation dynamically by asking a question.
+Perform an HTTP GET request on a page URL with the `ask` query parameter:
+```
+GET https://docs.flora.ai/getting-started/readme.md?ask=<question>
+```
+The question should be specific, self-contained, and written in natural language.
+The response will contain a direct answer to the question and relevant excerpts and sources from the documentation.
+Use this mechanism when the answer is not explicitly present in the current page, you need clarification or additional context, or you want to retrieve related documentation sections.

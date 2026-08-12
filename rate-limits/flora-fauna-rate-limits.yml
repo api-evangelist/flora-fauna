@@ -1,0 +1,74 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://developer.flora.ai/platform/errors, https://developer.flora.ai/mcp/tools,
+  https://developer.flora.ai/mcp/troubleshooting,
+  https://developer.flora.ai/recipes/batch-from-csv and
+  https://developer.flora.ai/recipes/upload-an-asset — every page on FLORA's
+  developer site that mentions rate limiting was read. None states a number.
+provider: FLORA
+providerId: flora-fauna
+description: >-
+  FLORA enforces rate limits and tells you how to react to them, but never says
+  what they are. The 429 response, the error code, the header and the scope are all
+  documented; the limit, the window and the burst are not published anywhere. The
+  guidance the provider gives instead is empirical — "drop to 2 concurrent",
+  "bound uploads at 4 at a time" — which is the shape of advice you give when the
+  number is not public.
+limit_count: 0
+published_limits: false
+limits: []
+scope: workspace
+scope_note: >-
+  Limits apply at the workspace level and are shared between the REST API and the
+  MCP server — the docs state MCP "rate limits apply at the workspace level and
+  match the REST API". An agent session and a backend batch job therefore contend
+  for the same budget, which is a real operational hazard the docs do not price.
+responseCodes:
+  throttled: 429
+  error_code: rate_limited
+headers:
+  retryAfter: retry-after
+  retryAfter_reliability: >-
+    Documented as "when present". FLORA's own published retry sample falls back to
+    5 seconds when the header is absent, so a client cannot depend on it.
+  requestId: request-id
+  rateLimitRemaining: null
+  rateLimitLimit: null
+  rateLimitReset: null
+  standard_ratelimit_headers: false
+  note: >-
+    No RateLimit-* or X-RateLimit-* headers are documented. A client learns it is
+    near a limit only by being refused — there is no forward-looking runtime signal
+    to pace against, which is the single most useful thing an agent needs here.
+provider_guidance:
+  - context: batch from CSV
+    advice: 'If you see 429 rate_limited, drop concurrency to 2 and let exponential backoff handle the rest.'
+    source: https://developer.flora.ai/recipes/batch-from-csv
+  - context: bulk asset upload
+    advice: 'For 50+ files, run uploads in parallel with bounded concurrency (e.g. 4 at a time) to avoid rate limits.'
+    source: https://developer.flora.ai/recipes/upload-an-asset
+  - context: MCP interactive use
+    advice: '429 is "rare in interactive use, more common in batch jobs" — reduce parallelism.'
+    source: https://developer.flora.ai/mcp/troubleshooting
+  - context: retry policy
+    advice: 'Retry 429, 500 and 503 with exponential backoff capped at 30s; never retry 400/401/403/404/409/422.'
+    source: https://developer.flora.ai/platform/errors
+plan_linked_limits:
+  published: false
+  note: >-
+    The pricing pages tie plans to a monthly USD generation budget, not to request
+    rates. The effective throughput ceiling most integrators will hit first is
+    financial (402 insufficient_credits), not a 429.
+adjacent_quotas:
+  - {name: seats, limit: 8, scope: self-serve workspace, source: 'https://docs.flora.ai/plans-and-billing/pricing'}
+  - {name: active API keys, limit: 1, scope: workspace, source: 'https://developer.flora.ai/platform/authentication'}
+  - {name: MCP execute HTTP request timeout, limit: 30s, scope: per request inside the sandbox, source: 'https://developer.flora.ai/mcp/tools'}
+  - {name: MCP execute total run time, limit: ~5 minutes, scope: per execute call, source: 'https://developer.flora.ai/mcp/tools'}
+  - {name: webhook delivery timeout, limit: 10s, scope: per delivery attempt, source: 'https://developer.flora.ai/platform/webhooks'}
+observed: false
+observed_note: >-
+  Not measured against a live endpoint. Unauthenticated calls to
+  https://app.flora.ai/api/v1/techniques and /models return 401 before any rate
+  limit applies, so no headers could be read anonymously and no probing was
+  attempted against a credentialed account.

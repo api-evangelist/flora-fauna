@@ -1,0 +1,110 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  Baseline derived from openapi/flora-fauna-flora-api-openapi.yml
+  (components.securitySchemes), then upgraded from FLORA's own documentation:
+  https://developer.flora.ai/platform/authentication and
+  https://developer.flora.ai/mcp/authentication, plus live probes of the OAuth
+  discovery documents in well-known/.
+docs:
+  - https://developer.flora.ai/platform/authentication
+  - https://developer.flora.ai/mcp/authentication
+description: >-
+  FLORA runs two independent authentication paths against the same workspace and
+  the same billing. The REST API takes a bearer API key; the MCP server takes
+  OAuth 2.1 with PKCE and will NOT accept the API key. The docs state plainly
+  that they can be used in parallel, and that the audit trail differs — an API key
+  attributes an action to a service account, OAuth attributes it to a named human
+  in a named client.
+summary:
+  types: [http, oauth2]
+  primary: http-bearer
+  mfa_or_delegated: oauth2 (MCP only)
+schemes:
+  - name: bearerAuth
+    type: http
+    scheme: bearer
+    surface: REST API (https://app.flora.ai/api/v1)
+    header: 'Authorization: Bearer sk_live_XXXX'
+    key_prefixes:
+      production: sk_live_
+      sandbox: sk_test_
+    sandbox_caveat: >-
+      The docs qualify sk_test_ as "sandbox, when available" — no separate sandbox
+      base URL or test-mode environment is published, so treat test keys as not
+      generally available.
+    creation: FLORA app > Settings > API Keys (https://app.flora.ai/projects?openSettings=true&initialTab=apiKeys)
+    secret_visibility: shown once at creation
+    keys_per_workspace: 1
+    rotation:
+      overlap_window: false
+      procedure: create the new key, cut applications over, then revoke the old one
+      note: >-
+        A hard operational constraint worth flagging: exactly one active key per
+        workspace with NO overlap window means every production rotation is a
+        cutover, not a drain. The docs offer to enable a hot-swap window per
+        workspace on request to support.
+    revocation: immediate; subsequent requests return 401 invalid_api_key
+    permissions_model: >-
+      Inherits the permissions of the workspace the key was created in. Read
+      everything, create runs (billed), upload assets, create/modify projects if
+      the workspace allows. Never billing or member management.
+    scopes: null
+    scopes_note: The REST API publishes no scope vocabulary; a key is workspace-wide.
+    sources:
+      - openapi/flora-fauna-flora-api-openapi.yml
+      - https://developer.flora.ai/platform/authentication
+  - name: mcp-oauth
+    type: oauth2
+    surface: MCP server (https://agents.flora.ai/mcp)
+    version: OAuth 2.1
+    grant_types: [authorization_code, refresh_token]
+    pkce: [S256, plain]
+    dynamic_client_registration: true
+    authorization_server: https://agents.flora.ai
+    authorization_endpoint: https://agents.flora.ai/authorize
+    token_endpoint: https://agents.flora.ai/token
+    registration_endpoint: https://agents.flora.ai/register
+    revocation_endpoint: https://agents.flora.ai/token
+    discovery:
+      rfc8414: well-known/flora-fauna-agents-oauth-authorization-server.json
+      rfc9728: well-known/flora-fauna-agents-oauth-protected-resource-mcp.json
+    scopes: null
+    scopes_note: >-
+      scopes_supported is absent from the authorization-server metadata. Access is
+      described in role terms instead: the connection gets exactly what the
+      signed-in FLORA user has in the connected workspace, and never billing or
+      member management.
+    token_storage: in the MCP client; FLORA does not hold client tokens
+    revocation: FLORA app > Settings > Connected apps, per client
+    error_on_expiry: 401 invalid_token
+    sources:
+      - https://developer.flora.ai/mcp/authentication
+      - well-known/flora-fauna-well-known.yml
+  - name: clerk-application-oidc
+    type: openIdConnect
+    surface: FLORA application sign-in (https://app.florafauna.ai)
+    issuer: https://clerk.flora.ai
+    discovery: well-known/flora-fauna-app-openid-configuration.json
+    scopes: [openid, profile, email, public_metadata, private_metadata, offline_access]
+    id_token_signing_alg: RS256
+    pkce: [S256]
+    note: >-
+      Clerk-hosted end-user identity for the product itself. Recorded because it is
+      genuinely served from a FLORA host and enumerates scopes, but it is NOT the
+      API's authentication and an integrator should not build against it.
+    sources:
+      - well-known/flora-fauna-app-openid-configuration.json
+transport_security:
+  https_required: true
+  webhook_callback_https_required: true
+  note: >-
+    Webhook callback_url values must be HTTPS and are rejected if they resolve to
+    localhost, *.local/*.internal, cloud-metadata hostnames, or private/loopback/
+    link-local IPs; FLORA does not follow 3xx on delivery.
+secret_handling_guidance:
+  server_side_only: true
+  env_var: FLORA_API_KEY
+  webhook_secret_env: FLORA_WEBHOOK_SECRET
+  rotation_cadence_recommended: 90 days
+  published_at: https://developer.flora.ai/platform/authentication

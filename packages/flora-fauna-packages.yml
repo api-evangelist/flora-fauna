@@ -1,0 +1,91 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://registry.npmjs.org/@flora-ai/flora, https://proxy.golang.org (module
+  index for github.com/florafauna-ai/flora-go and .../flora-cli), and FLORA's own
+  GitHub organization https://github.com/florafauna-ai. Versions and dates were
+  read from the registry metadata endpoints, not from prose in the docs.
+description: >-
+  First-party FLORA client libraries. All three are Stainless-generated from the
+  same Flora.ai OpenAPI document (the SDK repos carry .stats.yml pointing at the
+  spec) and all three live in FLORA's own GitHub organization, so official: true
+  is well founded. Note the currency spread: the TypeScript SDK is on a fast
+  release cadence (13 releases since 2026-05-12) while the Go SDK and Go CLI have
+  each shipped exactly one tagged version, v0.1.0, on 2026-05-20 — they have not
+  been re-tagged since even though the TypeScript SDK has moved five minor
+  versions and the spec now carries endpoints (canvas, actions, generations
+  retrieve) added after that date. flora-go reports 23 configured endpoints
+  against the TypeScript SDK's 30.
+packages:
+  - name: '@flora-ai/flora'
+    registry: npm
+    language: TypeScript / JavaScript
+    official: true
+    url: https://www.npmjs.com/package/@flora-ai/flora
+    repository: https://github.com/florafauna-ai/flora-typescript
+    version: 0.10.0
+    published: '2026-07-10'
+    first_published: '2026-05-12'
+    release_count: 13
+    install: npm install @flora-ai/flora
+    note: >-
+      The official TypeScript library for the FLORA API. Also the client the MCP
+      server's `execute` tool runs snippets against, so its method surface is the
+      de-facto MCP tool schema. Stainless .stats.yml reports configured_endpoints:
+      30.
+  - name: github.com/florafauna-ai/flora-go
+    registry: go
+    language: Go
+    official: true
+    url: https://pkg.go.dev/github.com/florafauna-ai/flora-go
+    repository: https://github.com/florafauna-ai/flora-go
+    version: v0.1.0
+    published: '2026-05-20'
+    first_published: '2026-05-20'
+    release_count: 1
+    install: go get github.com/florafauna-ai/flora-go
+    note: >-
+      Golang SDK for accessing FLORA through the API. Only one version has ever
+      been tagged in the Go module proxy. Its .stats.yml carries
+      configured_endpoints: 23 and the openapi_spec_url this profile's OpenAPI was
+      harvested from.
+  - name: github.com/florafauna-ai/flora-cli
+    registry: go
+    language: Go
+    official: true
+    kind: cli
+    url: https://pkg.go.dev/github.com/florafauna-ai/flora-cli
+    repository: https://github.com/florafauna-ai/flora-cli
+    version: v0.1.0
+    published: '2026-05-20'
+    first_published: '2026-05-20'
+    release_count: 1
+    install: go install github.com/florafauna-ai/flora-cli/cmd/flora@latest
+    note: >-
+      The `flora` command-line client. Distributed by `go install` (and a
+      .goreleaser.yml in-repo); no npm/Homebrew distribution is documented. See
+      cli/flora-fauna-cli.yml for the command surface.
+absent:
+  - registry: pypi
+    checked: '2026-08-12'
+    result: >-
+      No first-party package. `flora-ai`, `floraai` and `flora-sdk` all 404;
+      `flora` exists but is an unrelated 2018 project (fuzen-py/Flora, v0.0.1a1).
+      FLORA's docs publish TypeScript and CLI quickstarts only.
+  - registry: rubygems
+    checked: '2026-08-12'
+    result: >-
+      No first-party gem. `flora-ai` 404s; `flora` is an unrelated existing gem.
+  - registry: crates.io
+    checked: '2026-08-12'
+    result: >-
+      No first-party crate. `flora-ai` 404s; `flora` is an unrelated existing
+      crate.
+  - registry: maven
+    checked: '2026-08-12'
+    result: no first-party FLORA artifact documented or linked from the SDK docs
+  - registry: nuget
+    checked: '2026-08-12'
+    result: no first-party FLORA package documented or linked from the SDK docs
+sdk_count: 2
+cli_count: 1

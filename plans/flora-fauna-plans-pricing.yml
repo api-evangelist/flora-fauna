@@ -1,0 +1,149 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://flora.ai/pricing (the plan cards, read from the rendered page) and
+  https://docs.flora.ai/plans-and-billing/pricing plus
+  https://docs.flora.ai/plans-and-billing/faq and
+  https://docs.flora.ai/plans-and-billing/launch-bonus (the machine-readable
+  markdown twins of the billing docs, served at .md).
+provider: FLORA
+providerId: flora-fauna
+description: >-
+  Per-seat subscription where the subscription price and the monthly usage budget
+  are the same number: a $50 Pro seat carries $50 of model usage. Generations are
+  billed in dollars at published per-model rates against that budget, pooled across
+  the workspace by default. The API and MCP server are a paid feature gate — the
+  Free plan has neither — which makes Starter ($18/seat/mo) the true entry price
+  for any developer integration.
+plan_count: 5
+currency: USD
+billing_periods: [monthly, annual]
+annual_discount: 20% on Starter, Pro and Max
+pricing_model: per-seat subscription with an included USD usage budget + opt-in capped overage
+api_entitlement:
+  free_tier_has_api: false
+  minimum_plan_for_api: Starter
+  minimum_plan_for_mcp: Starter
+  note: >-
+    Stated twice and unambiguously — "no FLORA API or MCP" on Free; "Starter and
+    above include API & MCP". There is no free developer tier and no trial key.
+plans:
+  - id: free
+    name: Free
+    price: 0
+    currency: USD
+    period: month
+    unit: workspace
+    max_seats: 1
+    included_usage: null
+    included_usage_note: >-
+      Not a dollar allowance. "Limited complimentary generations for exploration" —
+      the pricing page footnote quantifies it as up to 17 generations free, based on
+      Nano Banana 2 at $0.151 per image, capped at $2.50 of total usage.
+    limits:
+      active_projects: 3
+      models: text and image only (no video models in the app)
+      api_access: false
+      mcp_access: false
+    features: [Full canvas & layer editor, Run & create techniques, FAUNA unlimited, Annotations & labels, Download & export]
+  - id: starter
+    name: Starter
+    price: 18
+    currency: USD
+    period: month
+    unit: seat
+    max_seats: 8
+    included_usage: 18
+    included_usage_unit: USD per seat per month
+    launch_bonus: 12
+    launch_bonus_total: 30
+    limits:
+      projects: unlimited
+      models: text, image and video
+      api_access: true
+      mcp_access: true
+    features: [Pooled team usage, All models, API & MCP access, Real-time collaboration]
+  - id: pro
+    name: Pro
+    price: 50
+    currency: USD
+    period: month
+    unit: seat
+    max_seats: 8
+    included_usage: 50
+    included_usage_unit: USD per seat per month
+    launch_bonus: 50
+    launch_bonus_total: 100
+    limits:
+      api_access: true
+      mcp_access: true
+    features: [Everything in Starter, Shared team assets, Shared elements, Per-member usage caps, Usage analytics]
+    marketed_as: Most Popular
+  - id: max
+    name: Max
+    price: 200
+    currency: USD
+    period: month
+    unit: seat
+    max_seats: 8
+    included_usage: 200
+    included_usage_unit: USD per seat per month
+    launch_bonus: 100
+    launch_bonus_total: 300
+    limits:
+      api_access: true
+      mcp_access: true
+    features: [Everything in Pro, 'Custom voices (3 per org)']
+  - id: enterprise
+    name: Enterprise
+    price: null
+    price_note: Custom — contact sales
+    currency: USD
+    period: null
+    unit: seat
+    max_seats: custom
+    included_usage: custom
+    limits:
+      api_access: true
+      mcp_access: true
+    features: [Custom seat count, Admin controls, Security features, Invoice billing]
+    contact: https://flora.ai/pricing
+usage_model:
+  unit: USD deducted per generation at published per-model rates
+  metered_on: images, video, audio, text generations
+  not_metered: FAUNA messages and interactions — free on every plan, always
+  failed_generations_charged: false
+  rollover: false
+  reset: monthly, at the billing cycle boundary
+  pooling: pooled across the workspace by default; admins may switch to per-user budgets and set per-member caps
+  visibility: live percentage bar in the app header; Usage History gives per-generation, per-project and per-member dollar cost
+  model_rate_card: https://docs.flora.ai/plans-and-billing/model-pricing
+overage:
+  name: Extra Usage / On-Demand Spending
+  opt_in: true
+  default: disabled
+  markup: none — published model rates
+  cap_required: true
+  cap_semantics: >-
+    The cap is total overage for the billing period, not outstanding balance. New
+    generations stop when total overage would exceed the cap.
+  payment_method_required: true (self-serve); Enterprise follows invoice terms
+promotions:
+  - name: Launch bonus
+    ends: '2026-08-31'
+    detail: 'Extra monthly usage per paid seat — Starter +$12, Pro +$50, Max +$100. Subscription prices unchanged when it ends.'
+    source: https://docs.flora.ai/plans-and-billing/launch-bonus
+seat_rules:
+  self_serve_cap: 8
+  beyond_cap: Enterprise (per-workspace exceptions available by emailing support)
+  legacy_contributors:
+    context: workspaces that migrated in May 2026
+    grace_period_ends: '2026-11-05'
+    note: Non-admin teammates keep editing access and draw on pooled usage until the grace period ends.
+  seat_cycling: demote an editor to guest to free a seat without changing subscription cost
+api_specific_pricing:
+  separate_api_price: false
+  note: >-
+    There is no API-specific rate card. API and MCP runs draw on the same workspace
+    dollar budget at the same published per-model rates as the canvas, which is
+    unusually clean — one meter, three surfaces.

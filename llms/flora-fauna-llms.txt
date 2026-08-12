@@ -1,0 +1,126 @@
+# Fetched by API Evangelist from https://developer.flora.ai/llms.txt on 2026-08-12 (HTTP 200). Saved verbatim below.
+
+# FLORA API
+
+## Docs
+
+- [Getting Started](/api/index.md): Start using the FLORA API to run techniques programmatically.
+- [Assets](/guides/assets/index.md): Upload, retrieve, retry, and attach media assets.
+- [Feedback](/guides/feedback/index.md): Report public API bugs, feature requests, and missing capabilities.
+- [Generations](/guides/generations/index.md): Start a one-off model generation without a saved technique.
+- [Models](/guides/models/index.md): List available FLORA models.
+- [Projects](/guides/projects/index.md): Create, list, retrieve, and attach assets to FLORA projects.
+- [Techniques](/guides/techniques/index.md): Discover technique schemas and start technique runs.
+- [Workspaces](/guides/workspaces/index.md): List the FLORA workspaces available to your API key.
+- [FLORA MCP](/mcp/index.md): Run FLORA Techniques from any MCP-compatible agent — Claude, Cursor, VS Code, Codex, and more.
+- [Authentication](/mcp/authentication/index.md): How FLORA MCP authenticates with your FLORA account over OAuth.
+- [Claude (web & Desktop)](/mcp/install/claude/index.md): Install FLORA MCP as a custom connector in Claude.ai and Claude Desktop.
+- [Claude Code](/mcp/install/claude-code/index.md): Install FLORA MCP in Claude Code with one command.
+- [OpenAI Codex](/mcp/install/codex/index.md): Add FLORA MCP to OpenAI Codex via the CLI or config.toml.
+- [Cursor](/mcp/install/cursor/index.md): Add FLORA MCP to Cursor via config file or one-click install.
+- [Hermes Agent](/mcp/install/hermes/index.md): Add FLORA MCP to Nous Research's Hermes Agent via config.yaml.
+- [OpenClaw](/mcp/install/openclaw/index.md): Add FLORA MCP to OpenClaw with the openclaw mcp CLI.
+- [Other clients](/mcp/install/other-clients/index.md): Connect FLORA MCP from any client that supports remote HTTP MCP servers.
+- [VS Code](/mcp/install/vscode/index.md): Add FLORA MCP to VS Code with one CLI command or by editing mcp.json.
+- [Batch with a coding agent](/mcp/recipes/batch-with-coding-agent/index.md): Combine FLORA MCP with any coding agent and external data sources to batch-run Techniques.
+- [Discover and run](/mcp/recipes/discover-and-run/index.md): Paste a brief, find the right Technique, generate a grid of options.
+- [Generate without a Technique](/mcp/recipes/generate-without-a-technique/index.md): Run a model straight from a prompt — no saved Technique required.
+- [Iterate on favorites](/mcp/recipes/iterate-on-favorites/index.md): Use prior outputs as inputs to explore variations of the ones you like.
+- [Prompting tips](/mcp/recipes/prompting-tips/index.md): How to ask any MCP-compatible agent to use FLORA effectively.
+- [Stills to motion](/mcp/recipes/stills-to-motion/index.md): Branch from one Technique into another, carrying selected outputs as inputs.
+- [Tools reference](/mcp/tools/index.md): The two MCP tools the FLORA server exposes, plus the full SDK method surface available inside execute.
+- [Troubleshooting](/mcp/troubleshooting/index.md): Common FLORA MCP problems and how to resolve them.
+- [Authentication](/platform/authentication/index.md): Create and manage API keys for the FLORA REST API.
+- [Errors](/platform/errors/index.md): Every FLORA API error code, what it means, and how to recover.
+- [Idempotency](/platform/idempotency/index.md): Safely retry FLORA mutations without duplicating runs or assets.
+- [Webhooks](/platform/webhooks/index.md): Receive a signed callback when a FLORA run finishes, and verify it before you trust it.
+- [CLI](/quickstarts/cli/index.md): Install the FLORA CLI and run your first Technique from the terminal.
+- [TypeScript](/quickstarts/typescript/index.md): Install the FLORA TypeScript SDK and run your first Technique.
+- [Batch from a CSV](/recipes/batch-from-csv/index.md): Process a spreadsheet of inputs with idempotency, parallelism, and backoff.
+- [Generate a grid](/recipes/generate-a-grid/index.md): Run a Technique with N outputs and render them as a grid.
+- [Iterate on outputs](/recipes/iterate-on-outputs/index.md): Re-run a Technique using previous outputs as image references.
+- [Upload an asset](/recipes/upload-an-asset/index.md): Upload a local image for a Technique input with FLORA MCP, a signed upload reservation, local shell curl, and asset completion.
+
+## API Reference
+
+Links below point to language-neutral HTTP documentation. SDK-specific docs follow the same URL structure with the language inserted after the base path: `/reference/{language}/resources/...`.
+
+Available languages: http, typescript
+
+### [Techniques](/reference/resources/techniques/index.md)
+
+- [Retrieve](/reference/resources/techniques/methods/retrieve/index.md): Get a technique
+- [List](/reference/resources/techniques/methods/list/index.md): List techniques
+
+- [Runs](/reference/resources/techniques/subresources/runs/index.md)
+
+  - [Create](/reference/resources/techniques/subresources/runs/methods/create/index.md): Start a technique run
+  - [List](/reference/resources/techniques/subresources/runs/methods/list/index.md): List technique run history
+  - [Retrieve](/reference/resources/techniques/subresources/runs/methods/retrieve/index.md): Get a technique run
+
+### [Assets](/reference/resources/assets/index.md)
+
+- [Create](/reference/resources/assets/methods/create/index.md): Create an asset upload
+- [Complete](/reference/resources/assets/methods/complete/index.md): Complete a signed asset upload
+- [Retry](/reference/resources/assets/methods/retry/index.md): Retry a signed asset upload
+- [List](/reference/resources/assets/methods/list/index.md): List assets
+- [Retrieve](/reference/resources/assets/methods/retrieve/index.md): Get an asset
+
+
+### [Workspaces](/reference/resources/workspaces/index.md)
+
+- [List](/reference/resources/workspaces/methods/list/index.md): List accessible workspaces
+
+
+### [Projects](/reference/resources/projects/index.md)
+
+- [List](/reference/resources/projects/methods/list/index.md): List workspace projects
+- [Create](/reference/resources/projects/methods/create/index.md): Create a project
+- [Retrieve](/reference/resources/projects/methods/retrieve/index.md): Get a project
+- [List Nodes](/reference/resources/projects/methods/list_nodes/index.md): List project canvas nodes
+
+- [Assets](/reference/resources/projects/subresources/assets/index.md)
+
+  - [Attach Asset](/reference/resources/projects/subresources/assets/methods/attach_asset/index.md): Attach an asset to a canvas
+
+
+- [Canvas](/reference/resources/projects/subresources/canvas/index.md)
+
+  - [Retrieve](/reference/resources/projects/subresources/canvas/methods/retrieve/index.md): Get project canvas
+  - [Update](/reference/resources/projects/subresources/canvas/methods/update/index.md): Patch project canvas
+
+
+- [Actions](/reference/resources/projects/subresources/actions/index.md)
+
+  - [Create](/reference/resources/projects/subresources/actions/methods/create/index.md): Create a canvas action
+  - [Run](/reference/resources/projects/subresources/actions/methods/run/index.md): Run a canvas action
+
+### [Actions](/reference/resources/actions/index.md)
+
+- [List](/reference/resources/actions/methods/list/index.md): List actions
+- [Retrieve](/reference/resources/actions/methods/retrieve/index.md): Get an action
+- [Run](/reference/resources/actions/methods/run/index.md): Start an action run
+
+
+### [Models](/reference/resources/models/index.md)
+
+- [List](/reference/resources/models/methods/list/index.md): List available models
+
+
+### [Runs](/reference/resources/runs/index.md)
+
+- [Start Generation](/reference/resources/runs/methods/start_generation/index.md): Start a generation run
+- [Start Technique](/reference/resources/runs/methods/start_technique/index.md): Start a top-level technique run
+
+
+### [Generations](/reference/resources/generations/index.md)
+
+- [Create](/reference/resources/generations/methods/create/index.md): Start a generation
+- [Retrieve](/reference/resources/generations/methods/retrieve/index.md): Get a run
+- [List](/reference/resources/generations/methods/list/index.md): List generation history
+
+
+### [Feedback](/reference/resources/feedback/index.md)
+
+- [Record](/reference/resources/feedback/methods/record/index.md): Record product feedback
+

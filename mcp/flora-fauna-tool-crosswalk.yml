@@ -1,0 +1,201 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  Derived by binding FLORA's published MCP surface
+  (https://developer.flora.ai/mcp/tools) to the operationIds in
+  openapi/flora-fauna-flora-api-openapi.yml (Flora.ai API v1.6.0, OpenAPI 3.1.1,
+  28 operations). Live tools/list is OAuth-gated (401), so the binding is by
+  published method name and documented semantics, with confidence stated per row.
+purpose: >-
+  FLORA is the clearest case in the catalog of a code-execution MCP server: it
+  ships TWO tools, and everything an agent can actually do lives one level down,
+  in the @flora-ai/flora SDK methods callable inside `execute`. A tool-count
+  reading of this server says "2 capabilities"; the truth is the whole REST
+  surface. This crosswalk restores the mapping — SDK method -> REST operationId —
+  so the agent-facing capability set is legible and each capability inherits a
+  real inputSchema from the OpenAPI operation that backs it.
+surfaces:
+  openapi: openapi/flora-fauna-flora-api-openapi.yml   # 25 paths / 28 operations; servers[] https://app.flora.ai/api/v1
+  mcp: https://agents.flora.ai/mcp                      # gated: tools/list returns 401 invalid_token (OAuth 2.1)
+  graphql: null                                         # no GraphQL surface published
+  sdk: '@flora-ai/flora 0.10.0'                         # the client bound into `execute`
+tools:
+  - name: search_docs
+    binding: none
+    note: >-
+      Documentation retrieval over the SDK reference. Backed by no REST operation;
+      it is a discovery affordance for the agent, not a FLORA API capability.
+  - name: execute
+    binding: proxy
+    note: >-
+      Generic TypeScript sandbox. Its effective inputSchema is "any SDK call", so
+      the meaningful crosswalk is the sdk_methods[] table below, not this tool.
+
+# SDK method (callable inside `execute`) -> backing REST operationId(s).
+# The bound operation's parameters + requestBody ARE the real input schema.
+crosswalk:
+  - tool: client.workspaces.list
+    category: workspaces
+    rest: [listWorkspaces]
+    binding: rest
+    confidence: high
+  - tool: client.models.list
+    category: models
+    rest: [listModels]
+    binding: rest
+    confidence: high
+  - tool: client.techniques.list
+    category: techniques
+    rest: [listTechniques]
+    binding: rest
+    confidence: high
+  - tool: client.techniques.retrieve
+    category: techniques
+    rest: [getTechnique]
+    binding: rest
+    confidence: high
+  - tool: client.techniques.runs.create
+    category: technique_runs
+    rest: [startTechniqueRun, createTopLevelTechniqueRun]
+    binding: rest
+    confidence: high
+    note: >-
+      Two REST routes start a technique run — the nested legacy route
+      POST /techniques/{techniqueId}/runs (startTechniqueRun, described in the
+      spec as "backward-compatible") and the flat POST /runs/technique
+      (createTopLevelTechniqueRun). The SDK method maps to the nested route in
+      every published example.
+  - tool: client.techniques.runs.retrieve
+    category: technique_runs
+    rest: [getTechniqueRun]
+    binding: rest
+    confidence: high
+  - tool: client.generations.create
+    category: generations
+    rest: [startGeneration, createGenerationRun]
+    binding: rest
+    confidence: medium
+    note: >-
+      POST /generate and POST /runs/generation both start a one-off model
+      generation. The docs use `client.generations.create` for both flows without
+      naming which route it calls.
+  - tool: client.generations.retrieve
+    category: generations
+    rest: [getRun]
+    binding: rest
+    confidence: high
+    note: GET /runs/{runId} is the shared terminal-state read for both run kinds.
+  - tool: client.assets.create
+    category: assets
+    rest: [uploadAsset]
+    binding: rest
+    confidence: high
+  - tool: client.assets.complete
+    category: assets
+    rest: [completeAssetUpload]
+    binding: rest
+    confidence: high
+  - tool: client.assets.retry
+    category: assets
+    rest: [retryAssetUpload]
+    binding: rest
+    confidence: high
+  - tool: client.assets.list
+    category: assets
+    rest: [listAssets]
+    binding: rest
+    confidence: high
+  - tool: client.assets.retrieve
+    category: assets
+    rest: [getAsset]
+    binding: rest
+    confidence: high
+  - tool: client.projects.list
+    category: projects
+    rest: [listProjects]
+    binding: rest
+    confidence: high
+  - tool: client.projects.create
+    category: projects
+    rest: [createProject]
+    binding: rest
+    confidence: high
+  - tool: client.projects.retrieve
+    category: projects
+    rest: [getProject]
+    binding: rest
+    confidence: high
+  - tool: client.projects.listNodes
+    category: projects
+    rest: [listCanvasNodes]
+    binding: rest
+    confidence: high
+  - tool: client.projects.assets.attachAsset
+    category: projects
+    rest: [attachCanvasAsset]
+    binding: rest
+    confidence: high
+  - tool: client.projects.canvas.retrieve
+    category: canvas
+    rest: [getProjectCanvas]
+    binding: rest
+    confidence: high
+    note: Returns the canvas topology as a Mermaid flowchart.
+  - tool: client.projects.canvas.update
+    category: canvas
+    rest: [patchProjectCanvas]
+    binding: rest
+    confidence: high
+    note: Applies a Mermaid diff to add or connect nodes, with optional per-node param overrides.
+  - tool: client.projects.actions.create
+    category: actions
+    rest: [createCanvasAction]
+    binding: rest
+    confidence: high
+  - tool: client.projects.actions.run
+    category: actions
+    rest: [runCanvasAction]
+    binding: rest
+    confidence: high
+  - tool: client.feedback.record
+    category: feedback
+    rest: [recordFeedback]
+    binding: rest
+    confidence: high
+
+mcp_only:
+  - tool: search_docs
+    reason: SDK documentation search; no REST equivalent exists.
+  - tool: client.techniques.runs.list
+    reason: >-
+      Documented in the MCP tools reference and in the API reference index ("List
+      technique run history"), but the published OpenAPI at this revision defines
+      no list route for technique runs. Either it landed after the spec snapshot
+      the Go SDK pins, or it is SDK-side pagination over another route.
+  - tool: client.generations.list
+    reason: >-
+      Same gap — "List generation history" appears in the reference index and the
+      MCP tools page, with no corresponding operation in the published spec.
+
+rest_only:
+  - operationId: listActions
+    reason: Prebuilt action catalog listing; not named in the MCP tools reference.
+  - operationId: getAction
+    reason: Prebuilt action retrieval; not named in the MCP tools reference.
+  - operationId: createActionRun
+    reason: POST /runs/action — flat action-run route with no documented SDK method in the MCP tools table.
+
+coverage:
+  openapi_operations: 28
+  sdk_methods_mapped: 23
+  operations_bound: 25
+  operations_unbound: 3
+  mcp_tools: 2
+  mcp_tools_bound_to_rest: 0
+  note: >-
+    Two counts that do not reconcile, and the divergence is the finding. FLORA's
+    TypeScript SDK reports configured_endpoints: 30 while the Go SDK and CLI pin a
+    23-endpoint generation of the same spec, and the published spec document
+    itself carries 28 operations. The MCP surface follows the TypeScript SDK, so
+    an agent can reach at least two capabilities (technique-run history,
+    generation history) that the machine-readable contract does not describe.

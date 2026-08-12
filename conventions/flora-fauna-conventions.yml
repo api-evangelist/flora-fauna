@@ -1,0 +1,168 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://developer.flora.ai/api, /platform/authentication, /platform/idempotency,
+  /platform/errors, /platform/webhooks — plus the operation descriptions and
+  response schemas in openapi/flora-fauna-flora-api-openapi.yml, which contradict
+  the docs on idempotency (recorded below rather than reconciled away).
+description: >-
+  How the Flora.ai REST API behaves across every operation: auth style,
+  idempotency, pagination, request tracing, versioning, the error envelope,
+  rate-limit signaling, the async run model, and the public ID prefix scheme.
+  These are the runtime semantics that OpenAPI does not express and that an agent
+  has to know before it can safely call anything.
+
+base_url: https://app.flora.ai/api/v1
+api_style: REST over HTTPS, JSON requests, JSON responses
+
+authentication:
+  scheme: Bearer API key
+  header: 'Authorization: Bearer sk_live_XXXX'
+  key_prefixes: [sk_live_, sk_test_]
+  keys_per_workspace: 1
+  scopes: none — a key is workspace-wide
+  alternate: OAuth 2.1 + PKCE, MCP surface only (https://agents.flora.ai/mcp)
+  docs: https://developer.flora.ai/platform/authentication
+  detail: authentication/flora-fauna-authentication.yml
+
+idempotency:
+  supported: true
+  mechanism_documented: idempotency_key field in the JSON request body
+  mechanism_in_spec: Idempotency-Key request header
+  retention_documented: 24 hours
+  retention_in_spec: 2 hours
+  conflict_code_documented: idempotency_conflict (HTTP 422)
+  conflict_code_in_spec: idempotency_duplicate
+  replay_indicator: 'idempotent-replayed: true response header'
+  comparison: full request body, byte-for-byte after JSON normalization
+  scope: per API key — the same key string under a different API key is a fresh entry
+  cached: the exact HTTP response, including status, the original request-id, and body
+  concurrency_caveat: >-
+    Not a coalescing mechanism. Two concurrent requests with the same key may both
+    execute; strict singleton behaviour has to be serialized client-side.
+  applies_to:
+    - POST /techniques/{techniqueId}/runs
+    - POST /runs/technique
+    - POST /generate
+    - POST /runs/generation
+    - POST /runs/action
+    - POST /assets
+    - POST /assets/{assetId}/complete
+    - POST /assets/{assetId}/retry
+    - POST /projects
+    - POST /projects/{projectId}/assets/{assetId}/attach
+    - POST /feedback
+  discrepancy: >-
+    FLORA documents this twice and the two accounts do not agree. The developer
+    site says: body field `idempotency_key`, 24-hour window, 422
+    idempotency_conflict. Every mutating operation description in the published
+    OpenAPI says: optional `Idempotency-Key` HEADER, TWO-hour window,
+    `idempotency_duplicate` — and idempotency_duplicate is the code that actually
+    appears in the spec's error enum, while idempotency_conflict does not appear
+    in the spec at all. An integrator that trusts one source and retries against
+    the other gets a duplicate billed run. Both are recorded verbatim; neither is
+    asserted as correct.
+  docs: https://developer.flora.ai/platform/idempotency
+
+pagination:
+  style: cursor
+  request_params:
+    limit: documented on list calls (e.g. ?limit=5)
+    cursor: opaque cursor token
+  sdk_support: 'the TypeScript SDK exposes async iteration (for await ... of client.techniques.list())'
+  docs: https://developer.flora.ai/api
+
+request_tracing:
+  response_header: request-id
+  format: req_*
+  guidance: >-
+    The docs are emphatic — capture it on every call. Support states it usually
+    cannot locate a request without one. The header also identifies which API key
+    made the call.
+  docs: https://developer.flora.ai/platform/errors
+
+versioning:
+  scheme: path-prefix
+  current: v1
+  spec_version: 1.6.0
+  webhook_payload_contract: date-based, api_version field (observed '2026-06-11')
+  deprecation_policy_published: false
+  in_contract_deprecation: >-
+    POST /techniques/{techniqueId}/runs is labelled in the spec as "the
+    backward-compatible nested route", with POST /runs/technique presented as the
+    normalized top-level resource — a documented soft migration with no sunset
+    date attached.
+  detail: lifecycle/flora-fauna-lifecycle.yml
+
+error_envelope:
+  shape: '{ "error": { "code": string, "message": string, "fields"?: [{ "field", "message" }] } }'
+  rfc9457: false
+  content_type: application/json
+  status_codes_defined_per_operation: [400, 401, 402, 403, 404, 409, 429, 500]
+  field_level_errors: >-
+    Validation failures return a `fields` array naming each rejected field.
+  detail: errors/flora-fauna-problem-types.yml
+  docs: https://developer.flora.ai/platform/errors
+
+rate_limit_signaling:
+  status: 429
+  error_code: rate_limited
+  header: retry-after
+  header_note: >-
+    Documented as present "when present" — the docs' own retry sample defaults to
+    5 seconds when the header is missing, so a client cannot rely on it.
+  scope: per workspace, shared by REST and MCP
+  published_limits: none
+  detail: rate-limits/flora-fauna-rate-limits.yml
+
+async_run_model:
+  modes: [async, stream]
+  lifecycle: pending -> running -> completed | failed
+  progress_field: progress (0-100)
+  poll_hint: poll_url returned on run creation
+  recommended_interval: 2-5 seconds
+  terminal_fields_on_success: [outputs, charged_cost, completed_at]
+  terminal_fields_on_failure: [error_code, error_message]
+  run_level_error_codes: [model_timeout, safety_blocked, input_unreachable, internal_error]
+  important: >-
+    A run that STARTS successfully returns HTTP 200 and can still fail during
+    execution. HTTP status is not run status; clients must branch on
+    status === 'failed' and read error_code. Runs do not auto-retry.
+  alternative_to_polling: per-request callback_url webhook (see asyncapi/flora-fauna-webhooks.yml)
+
+public_id_prefixes:
+  workspace: ws_
+  project: prj_
+  technique: tech_
+  run: run_
+  asset: asset_
+  webhook_delivery: whd_
+  api_key: sk_live_
+  webhook_signing_secret: whsec_
+  note: >-
+    Prefixes are enforced, not cosmetic — the spec constrains them with regex
+    patterns (e.g. ^tech_\S+$) and passing a bare id returns input_validation_error
+    naming the expected prefix.
+
+input_media_constraints:
+  scheme: HTTPS only (http:// rejected)
+  allowlisted_hosts: [FLORA media, Google Cloud Storage, Amazon S3, ImageKit]
+  output_url_durability: >-
+    Output URLs are long-lived but NOT permanent. FLORA tells integrators to
+    download anything they need to keep rather than storing the URL.
+
+billing_semantics:
+  unit: USD deducted from the workspace budget
+  pre_flight_cost: run_cost on GET /techniques/{techniqueId}
+  post_flight_cost: charged_cost on the completed run
+  failed_generations_charged: false
+  exhaustion_error: 402 insufficient_credits
+  note: Every mutating run call spends real money; this is why idempotency matters here more than usual.
+
+cross_links:
+  errors: errors/flora-fauna-problem-types.yml
+  lifecycle: lifecycle/flora-fauna-lifecycle.yml
+  authentication: authentication/flora-fauna-authentication.yml
+  rate_limits: rate-limits/flora-fauna-rate-limits.yml
+  webhooks: asyncapi/flora-fauna-webhooks.yml
+  data_model: data-model/flora-fauna-data-model.yml

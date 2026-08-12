@@ -1,0 +1,162 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  Derived from openapi/flora-fauna-flora-api-openapi.yml (Flora.ai API v1.6.0) by
+  reading the inline request/response schemas of all 28 operations and following
+  the id-reference fields and their enforced prefix patterns, then cross-checked
+  against the object descriptions on https://developer.flora.ai/reference and
+  https://developer.flora.ai/api.
+caveat: >-
+  The published spec defines ZERO components.schemas — every object is inlined at
+  its use site, so there are no $ref edges to walk and no named types to bind to.
+  The graph below was reconstructed from field names, their regex-enforced ID
+  prefixes, and route nesting. That absence is itself the most important structural
+  finding about this contract: 938 KB of schema with nothing reusable in it.
+id_prefixes:
+  workspace: ws_
+  project: prj_
+  technique: tech_
+  run: run_
+  asset: asset_
+  feedback: fb_
+  webhook_delivery: whd_
+  api_key: sk_live_
+  webhook_secret: whsec_
+prefix_enforcement: >-
+  Enforced in the contract, not just documented — the spec constrains them with
+  patterns (^ws_\S+$, ^prj_\S+$, ^tech_\S+$, ^run_\S+$, ^asset_\S+$, ^fb_\S+$) and
+  a bare ID returns input_validation_error naming the expected prefix. Note that
+  action_id, model_id, node_id and output_id carry NO prefix and NO pattern —
+  actions are referenced by human slug (e.g. "rotate-image"), models by an opaque
+  endpoint ID from GET /models, and canvas nodes by an unprefixed node identifier.
+entities:
+  - name: Workspace
+    id_field: workspace_id
+    prefix: ws_
+    root: true
+    operations: [listWorkspaces]
+    fields: [workspace_id, name, role, created_at]
+    note: >-
+      The billing and permission boundary. An API key belongs to exactly one
+      workspace, so the workspace is effectively the tenant.
+  - name: Project
+    id_field: project_id
+    prefix: prj_
+    operations: [listProjects, createProject, getProject, listCanvasNodes]
+    note: The container for canvas work. Projects live in a workspace.
+  - name: Canvas
+    id_field: null
+    identified_by: parent project
+    operations: [getProjectCanvas, patchProjectCanvas]
+    representation: Mermaid flowchart
+    note: >-
+      Unusual and worth calling out: the canvas is not exposed as a node/edge JSON
+      graph but as a MERMAID DIAGRAM, read whole and patched with a Mermaid diff.
+      A textual diagram language is the wire format for the product's core data
+      structure — which is why an LLM can manipulate it fluently and a
+      conventional client cannot.
+  - name: CanvasNode
+    id_field: node_id
+    prefix: none
+    operations: [listCanvasNodes, runCanvasAction, attachCanvasAsset]
+  - name: Technique
+    id_field: technique_id
+    prefix: tech_
+    also_addressable_by: slug
+    operations: [listTechniques, getTechnique]
+    fields: [technique_id, name, description, run_cost, 'inputs[]', 'outputs[]']
+    note: >-
+      A saved generative workflow, authored in FLORA's visual editor. The API RUNS
+      techniques; it cannot create or edit them — a deliberate and clearly stated
+      boundary between the canvas product and the programmable surface.
+  - name: TechniqueInput
+    embedded_in: Technique
+    fields: [id, name, type, description, specified_aspect_ratio, specified_duration]
+    type_enum: [imageUrl, videoUrl, audioUrl, text, documentUrl]
+  - name: Run
+    id_field: run_id
+    prefix: run_
+    operations: [startTechniqueRun, getTechniqueRun, getRun, createTopLevelTechniqueRun, createGenerationRun, createActionRun, startGeneration]
+    fields: [run_id, status, progress, created_at, started_at, completed_at, charged_cost, error_code, error_message, 'outputs[]', poll_url]
+    status_enum: [pending, running, completed, failed]
+    subtypes: [technique, generation, action]
+    note: >-
+      The join point of the whole model. A Run is created from a Technique, a raw
+      model Generation, or an Action; it belongs to a workspace and usually a
+      project; it produces RunOutputs; and it is the object a webhook announces.
+  - name: RunOutput
+    embedded_in: Run
+    id_field: output_id
+    fields: [output_id, type, url]
+    type_enum: [imageUrl, videoUrl, audioUrl, text, documentUrl]
+    durability: long-lived but not permanent — download anything you need to keep
+  - name: Asset
+    id_field: asset_id
+    prefix: asset_
+    operations: [listAssets, uploadAsset, getAsset, completeAssetUpload, retryAssetUpload, attachCanvasAsset]
+    lifecycle: reserve signed upload -> upload bytes -> complete (or retry on expiry)
+    note: Three-step signed upload; a 409 conflict guards out-of-order transitions.
+  - name: Model
+    id_field: model_id
+    prefix: none
+    operations: [listModels]
+    fields: [model_id, name, provider, type, estimated_credits, estimated_seconds, 'params[{name, required, type, default, min, max, options}]']
+    note: >-
+      The catalog of the 50+ third-party models FLORA fronts. `params` is a
+      self-describing per-model parameter schema — the closest thing in the
+      contract to a reusable type, and it is data rather than schema.
+  - name: Action
+    id_field: action_id
+    prefix: none
+    addressed_by: slug (e.g. rotate-image)
+    operations: [listActions, getAction, createCanvasAction, runCanvasAction, createActionRun]
+    note: Prebuilt deterministic editing tools that can run headless or as a canvas node.
+  - name: Feedback
+    id_field: feedback_id
+    prefix: fb_
+    operations: [recordFeedback]
+    note: >-
+      Product feedback, optionally linked to a workspace, project, run and
+      attempted tools. Notably a first-class API resource — the MCP docs expect an
+      agent to file it on the user's behalf.
+  - name: WebhookDelivery
+    id_field: id
+    prefix: whd_
+    surface: outbound
+    fields: [id, type, api_version, created_at, 'data{run_id, run_type, workspace_id, status, error_code, error_message}']
+    detail: asyncapi/flora-fauna-webhooks.yml
+relationships:
+  - {from: Workspace, to: Project, type: has_many, via: workspace_id}
+  - {from: Workspace, to: Asset, type: has_many, via: workspace_id}
+  - {from: Workspace, to: Technique, type: has_many, via: workspace_id}
+  - {from: Workspace, to: Run, type: has_many, via: workspace_id}
+  - {from: Project, to: Workspace, type: belongs_to, via: workspace_id}
+  - {from: Project, to: Canvas, type: has_one, via: 'route nesting /projects/{projectId}/canvas'}
+  - {from: Project, to: CanvasNode, type: has_many, via: 'route nesting /projects/{projectId}/nodes'}
+  - {from: Project, to: Asset, type: has_many, via: 'attach — /projects/{projectId}/assets/{assetId}/attach'}
+  - {from: Canvas, to: CanvasNode, type: has_many, via: Mermaid diagram nodes}
+  - {from: CanvasNode, to: Action, type: has_one, via: action_id}
+  - {from: Technique, to: TechniqueInput, type: has_many, via: 'inputs[]'}
+  - {from: Technique, to: TechniqueInput, type: has_many, via: 'outputs[]'}
+  - {from: Technique, to: Run, type: has_many, via: technique_id}
+  - {from: Run, to: Technique, type: belongs_to, via: technique_id}
+  - {from: Run, to: Project, type: belongs_to, via: project_id}
+  - {from: Run, to: Workspace, type: belongs_to, via: workspace_id}
+  - {from: Run, to: Model, type: belongs_to, via: model_id}
+  - {from: Run, to: RunOutput, type: has_many, via: 'outputs[]'}
+  - {from: Run, to: WebhookDelivery, type: has_many, via: data.run_id}
+  - {from: Asset, to: Workspace, type: belongs_to, via: workspace_id}
+  - {from: Feedback, to: Workspace, type: belongs_to, via: workspace_id}
+  - {from: Feedback, to: Project, type: belongs_to, via: project_id}
+  - {from: Feedback, to: Run, type: belongs_to, via: run_id}
+counts:
+  entities: 13
+  relationships: 22
+  components_schemas_in_spec: 0
+  reuse_note: >-
+    Zero named schemas means every one of these entities is redefined inline at
+    each of its use sites. The Run shape alone is repeated across seven operations.
+    Nothing in the contract tells a generator that two identical objects are the
+    same type — the SDKs recover it, the spec does not express it.
+render: null
+render_note: No subway/ diagram has been generated for this provider yet.

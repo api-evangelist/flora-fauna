@@ -1,0 +1,149 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  Live probes of https://agents.flora.ai/.well-known/* and
+  https://app.florafauna.ai/.well-known/*, the harvested
+  openapi/flora-fauna-flora-api-openapi.yml, FLORA's developer documentation at
+  developer.flora.ai, and https://trust.flora.ai. Each entry names the evidence it
+  was decided on; absence is recorded as conforms: false, not omitted.
+standards:
+  - id: openapi-3.1
+    conforms: true
+    evidence: >-
+      Flora.ai API v1.6.0 declares openapi 3.1.1, 25 paths / 28 operations, all
+      with unique operationIds and declared 2xx + 4xx/5xx responses. Published by
+      FLORA via the openapi_spec_url in its own SDK repositories' .stats.yml.
+  - id: json-schema-2020-12
+    conforms: true
+    evidence: OpenAPI 3.1 uses JSON Schema 2020-12 for all inline request/response schemas.
+  - id: rest
+    conforms: true
+    evidence: Resource-oriented JSON over HTTPS at https://app.flora.ai/api/v1.
+  - id: mcp
+    conforms: true
+    evidence: >-
+      Vendor-operated remote MCP server at https://agents.flora.ai/mcp over
+      streamable HTTP; probed 2026-08-12 and returned a spec-correct 401 with an
+      RFC 9728 resource_metadata pointer in WWW-Authenticate.
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      OAuth 2.1 authorization_code + refresh_token on the MCP surface, and a
+      Clerk-hosted authorization server for application sign-in.
+  - id: oauth2-pkce
+    conforms: true
+    evidence: code_challenge_methods_supported includes S256 on both authorization servers.
+    caveat: >-
+      agents.flora.ai also advertises `plain` alongside S256. OAuth 2.1 requires
+      PKCE and S256; offering plain is a permissive downgrade path a strict
+      profile would not allow.
+  - id: rfc8414-authorization-server-metadata
+    conforms: true
+    evidence: /.well-known/oauth-authorization-server returns valid metadata (200) on agents.flora.ai and app.florafauna.ai.
+  - id: rfc9728-protected-resource-metadata
+    conforms: true
+    evidence: >-
+      /.well-known/oauth-protected-resource and the per-resource
+      /.well-known/oauth-protected-resource/mcp both return 200, and the 401
+      challenge points at the latter — the full discovery loop closes.
+  - id: rfc7591-dynamic-client-registration
+    conforms: true
+    evidence: registration_endpoint https://agents.flora.ai/register is advertised in the RFC 8414 document.
+  - id: oidc-discovery
+    conforms: true
+    evidence: >-
+      https://app.florafauna.ai/.well-known/openid-configuration returns a full
+      OIDC discovery document (issuer https://clerk.flora.ai, RS256, six scopes).
+      Application sign-in only — not API authorization.
+  - id: idempotency
+    conforms: partial
+    evidence: >-
+      Idempotency is implemented and documented for every mutating operation, with
+      a replay indicator header — but FLORA publishes two incompatible accounts of
+      it (body field vs Idempotency-Key header, 24h vs 2h retention,
+      idempotency_conflict vs idempotency_duplicate). It does not follow the
+      IETF idempotency-key draft's header semantics unambiguously.
+      See conventions/flora-fauna-conventions.yml.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      Errors use a proprietary { error: { code, message, fields[] } } envelope
+      served as application/json. No type URI, no title/detail/instance, not
+      application/problem+json. Consistent and machine-parseable, but not RFC 9457.
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: >-
+      No Sunset or Deprecation response headers are documented, and no operation
+      carries `deprecated: true`.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: /.well-known/security.txt returns 404 on flora.ai, www.florafauna.ai, app.flora.ai, app.florafauna.ai, docs.flora.ai, docs.florafauna.ai, developer.flora.ai and agents.flora.ai.
+  - id: well-known-api-catalog
+    conforms: false
+    evidence: /.well-known/api-catalog returns 404 on every FLORA host probed.
+  - id: llms-txt
+    conforms: true
+    evidence: >-
+      Two llms.txt documents served — https://developer.flora.ai/llms.txt (API) and
+      https://docs.flora.ai/llms.txt (product), plus a full llms-full.txt and .md
+      twins of every docs page. Both saved under llms/.
+  - id: a2a-agent-card
+    conforms: false
+    evidence: >-
+      /.well-known/agent-card.json and the legacy /.well-known/agent.json return
+      404 on all eight FLORA hosts probed (flora.ai, www.florafauna.ai, app.flora.ai, app.florafauna.ai, docs.flora.ai, docs.florafauna.ai, developer.flora.ai, agents.flora.ai). No agent card is published, and none was
+      authored on the provider's behalf.
+  - id: asyncapi
+    conforms: false
+    evidence: >-
+      No AsyncAPI document is published. The event surface is a two-event webhook
+      catalog documented in prose only (asyncapi/flora-fauna-webhooks.yml).
+  - id: webhook-hmac-signing
+    conforms: true
+    evidence: >-
+      HMAC-SHA256 over "{timestamp}.{rawBody}" in a Flora-Signature header, with a
+      5-minute default replay window, at-least-once delivery, per-delivery IDs for
+      dedupe, and documented SSRF controls (HTTPS-only, private-target rejection,
+      no redirect following).
+  - id: graphql
+    conforms: false
+    evidence: No GraphQL endpoint is documented or discoverable.
+  - id: grpc
+    conforms: false
+    evidence: No .proto files are published in FLORA's GitHub organization or on buf.build.
+  - id: soc2
+    conforms: true
+    evidence: >-
+      SOC 2 named on FLORA's trust center at https://trust.flora.ai (SecurityPal
+      AI). See security/flora-fauna-trust-center.yml.
+  - id: gdpr
+    conforms: true
+    evidence: GDPR named on https://trust.flora.ai alongside SOC 2.
+  - id: hsts
+    conforms: partial
+    evidence: >-
+      HSTS is enabled on www.florafauna.ai (max-age 31536000) and app.flora.ai
+      (max-age 63072000), but NOT on developer.flora.ai. See
+      security/flora-fauna-domain-security.yml.
+  - id: dnssec
+    conforms: false
+    evidence: Neither florafauna.ai nor flora.ai is DNSSEC-signed; neither publishes CAA records.
+  - id: dmarc
+    conforms: partial
+    evidence: >-
+      Both domains publish SPF and DMARC, but at different strengths —
+      florafauna.ai is p=quarantine while flora.ai, the domain that now carries the
+      product, docs, API and MCP, is p=none.
+summary:
+  conforms: 15
+  partial: 3
+  does_not_conform: 8
+  strongest: >-
+    The agent-facing OAuth stack. FLORA closes the full MCP discovery loop —
+    RFC 8414 + RFC 9728 + per-resource metadata in the 401 challenge + dynamic
+    client registration — which is a level of correctness most MCP servers in the
+    catalog do not reach.
+  weakest: >-
+    Everything that tells a consumer about change and risk: no deprecation policy
+    or headers, no security.txt, no API changelog, no published rate limits, and a
+    p=none DMARC on the primary product domain.

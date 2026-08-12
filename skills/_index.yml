@@ -1,0 +1,30 @@
+generated: '2026-08-12'
+method: generated
+source: >-
+  Packaged Agent Skills generated from FLORA's published OpenAPI
+  (openapi/flora-fauna-flora-api-openapi.yml, Flora.ai API v1.6.0, harvested from
+  the openapi_spec_url FLORA publishes in its own SDK repositories). Every step
+  cites an operationId verified verbatim in the spec; cross-cutting rules cite
+  ../authentication/, ../errors/, ../conventions/, ../rate-limits/,
+  ../data-model/ and ../asyncapi/. No provider-published AGENTS.md or skills
+  directory was found — probed developer.flora.ai, docs.flora.ai and
+  github.com/florafauna-ai.
+authored_by: API Evangelist
+provider_published: false
+skills:
+  - file: flora-fauna-run-a-technique.md
+    name: Run a FLORA Technique and collect its outputs
+    api: openapi/flora-fauna-flora-api-openapi.yml
+    operations: [listTechniques, getTechnique, startTechniqueRun, getTechniqueRun]
+  - file: flora-fauna-generate-without-a-technique.md
+    name: Generate directly from a model, without a saved Technique
+    api: openapi/flora-fauna-flora-api-openapi.yml
+    operations: [listWorkspaces, listProjects, listModels, startGeneration, createGenerationRun, getRun]
+  - file: flora-fauna-upload-and-attach-an-asset.md
+    name: Upload a local file and use it as a Technique input
+    api: openapi/flora-fauna-flora-api-openapi.yml
+    operations: [uploadAsset, completeAssetUpload, retryAssetUpload, getAsset, listAssets, attachCanvasAsset]
+  - file: flora-fauna-patch-a-project-canvas.md
+    name: Read and patch a FLORA project canvas
+    api: openapi/flora-fauna-flora-api-openapi.yml
+    operations: [getProject, listCanvasNodes, getProjectCanvas, patchProjectCanvas, listActions, getAction, createCanvasAction, runCanvasAction]

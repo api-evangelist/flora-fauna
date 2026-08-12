@@ -1,0 +1,187 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://developer.flora.ai/platform/errors (the provider's own error reference),
+  reconciled against the 4xx/5xx response schemas in
+  openapi/flora-fauna-flora-api-openapi.yml — every one of the 28 operations
+  defines 400, 401, 402, 403, 404, 409, 429 and 500 with the same enveloped error
+  schema and the same code enum.
+format: proprietary-envelope
+rfc9457: false
+content_type: application/json
+envelope:
+  shape: '{ "error": { "code": string, "message": string, "fields"?: [{ "field": string, "message": string }] } }'
+  required: [code, message]
+  additional_properties: false
+  note: >-
+    Not RFC 9457 problem+json — no type URI, no title/detail/instance, and served
+    as application/json rather than application/problem+json. It is however
+    consistently shaped across all 28 operations and machine-parseable, with a
+    closed enum of codes in the spec.
+spec_code_enum:
+  - unauthorized
+  - invalid_api_key
+  - forbidden
+  - invalid_json
+  - input_validation_error
+  - not_found
+  - insufficient_credits
+  - idempotency_duplicate
+  - rate_limited
+  - unknown_error
+enum_note: >-
+  The enum above is what the OpenAPI declares. The docs additionally describe
+  `idempotency_conflict` (422) and `service_unavailable` (503), neither of which
+  is in the spec enum or in any operation's declared responses; and the spec's
+  `idempotency_duplicate` and `unknown_error` are not described in the docs. Both
+  lists are recorded rather than merged.
+problem_types:
+  - code: invalid_json
+    http: 400
+    title: Malformed request body
+    detail: The request body was not valid JSON.
+    remediation: >-
+      Validate the JSON before sending. With an SDK this almost always indicates a
+      serialization bug client-side, not a server fault.
+    retryable: false
+  - code: input_validation_error
+    http: 400
+    title: Request failed validation
+    detail: >-
+      The body parsed but a field is missing, wrongly typed, uses the wrong public
+      ID prefix, or does not match the Technique's input schema.
+    fields_array: true
+    remediation: >-
+      Read the `fields` array. Check the ID prefix (ws_, prj_, tech_, run_,
+      asset_). For generations use type image|video|audio|text, not t2i/i2v/
+      text-to-image. Pass `model` as a model endpoint ID from GET /models. For
+      asset uploads pass `source` as "signed-url" or an allowlisted HTTPS URL. For
+      technique runs, GET /techniques/{slug} first and match each input id and type
+      exactly.
+    retryable: false
+  - code: unauthorized
+    http: 401
+    title: Missing credentials
+    detail: No Authorization header was sent.
+    remediation: 'Send Authorization: Bearer sk_live_XXXX on every request.'
+    retryable: false
+  - code: invalid_api_key
+    http: 401
+    title: Bad or revoked key
+    detail: The API key is malformed, revoked, or does not exist.
+    remediation: >-
+      Check for whitespace and a duplicated "Bearer " prefix. If revoked, create a
+      new key in Settings > API Keys — revocation is irreversible.
+    retryable: false
+  - code: invalid_token
+    http: 401
+    title: OAuth token expired or revoked
+    detail: MCP surface only. The OAuth token could not refresh, or was revoked from Connected apps.
+    remediation: Reconnect the MCP client to re-run the OAuth flow.
+    retryable: false
+    surface: mcp
+  - code: insufficient_credits
+    http: 402
+    title: Workspace balance too low
+    detail: The workspace USD balance cannot cover the run.
+    remediation: >-
+      Top up in Settings > Billing, or enable capped on-demand overage. run_cost on
+      GET /techniques/{id} and charged_cost on completed runs show the burn rate.
+    retryable: true
+    retry_after_remediation: true
+  - code: forbidden
+    http: 403
+    title: Not permitted
+    detail: >-
+      The key or user is valid but lacks permission. Typical causes: creating a
+      Project with a read-only role, a workspace you were removed from, or an
+      archived Technique.
+    remediation: Confirm the role in the FLORA app; contact support with the request-id if it looks correct.
+    retryable: false
+  - code: not_found
+    http: 404
+    title: Unknown resource
+    detail: The resource ID, Technique slug or run ID does not exist or does not belong to your workspace.
+    remediation: >-
+      For Techniques the app URL https://app.flora.ai/techniques/{slug} is
+      authoritative. For runs, check you have not switched workspaces between
+      create and poll.
+    retryable: false
+  - code: conflict
+    http: 409
+    title: Invalid state transition
+    detail: >-
+      The resource state does not allow the operation — completing an asset that is
+      already complete, retrying an asset that did not fail.
+    remediation: GET the resource first and only act if the current state allows it.
+    retryable: false
+  - code: idempotency_duplicate
+    http: 409
+    title: Duplicate idempotency key
+    detail: >-
+      Declared in the spec's error enum. The spec's operation descriptions say
+      duplicate keys within two hours return this code.
+    remediation: Treat as a replay of the original operation; do not re-submit.
+    retryable: false
+    source: openapi
+  - code: idempotency_conflict
+    http: 422
+    title: Idempotency key reused with a different body
+    detail: >-
+      Documented on the developer site only; 422 is not among the response codes
+      any operation declares in the spec.
+    remediation: Reuse the original body to get the cached response, or pick a new key.
+    retryable: false
+    source: docs
+  - code: rate_limited
+    http: 429
+    title: Rate limit exceeded
+    detail: The per-workspace request rate was exceeded.
+    remediation: >-
+      Back off exponentially and reduce batch parallelism. Honour the `retry-after`
+      header when present; FLORA's own sample defaults to 5 seconds when it is not.
+    retryable: true
+  - code: internal_error
+    http: 500
+    title: Server error
+    detail: The request did not complete due to a fault on FLORA's side.
+    remediation: Retry with exponential backoff; send the request-id to support if it persists.
+    retryable: true
+  - code: service_unavailable
+    http: 503
+    title: Overloaded or in maintenance
+    detail: Documented on the developer site; not declared in any operation's responses.
+    remediation: Retry with exponential backoff and check the status page.
+    retryable: true
+    source: docs
+  - code: unknown_error
+    http: 500
+    title: Unclassified error
+    detail: Present in the spec's error code enum with no corresponding docs entry.
+    remediation: Retry with backoff; report the request-id.
+    retryable: true
+    source: openapi
+run_level_errors:
+  note: >-
+    A distinct error channel that HTTP status does not reveal. A run can start with
+    HTTP 200 and terminate as status "failed", carrying error_code / error_message
+    in the run body. Clients that only branch on HTTP status will silently treat
+    failed generations as successes.
+  codes:
+    - {code: model_timeout, meaning: The underlying model did not return in time. Usually transient — retry., retryable: true}
+    - {code: safety_blocked, meaning: The model refused the request on safety grounds. Adjust the prompt., retryable: false}
+    - {code: input_unreachable, meaning: A URL input (image/video) could not be fetched. Check the URL and host allowlist., retryable: false}
+    - {code: internal_error, meaning: Generic execution failure., retryable: true}
+retry_guidance:
+  retry: [429, 500, 503]
+  do_not_retry: [400, 401, 403, 404, 409, 422]
+  backoff: exponential, capped at 30s in the provider's published sample
+tracing:
+  header: request-id
+  format: req_*
+  required_for_support: true
+coverage:
+  operations: 28
+  operations_with_4xx_schema: 28
+  operations_with_5xx_schema: 28
+  share_with_error_schema: 1.0

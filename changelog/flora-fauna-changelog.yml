@@ -1,0 +1,120 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://github.com/florafauna-ai/flora-typescript/blob/main/CHANGELOG.md
+  (fetched raw, HTTP 200) — the only dated, user-facing record of FLORA API change
+  published on a FLORA-controlled surface. Probed and confirmed absent:
+  developer.flora.ai/changelog (404), docs.flora.ai/changelog (404),
+  flora.ai/changelog (404).
+scheme: semver, release-please generated, per-SDK
+api_changelog_published: false
+api_changelog_note: >-
+  FLORA publishes no API changelog page. What exists is the release history of the
+  generated TypeScript SDK, which is a genuine and unusually well-written proxy —
+  the maintainers explicitly "rewrite changelog with user-facing release
+  descriptions" — but it describes the CLIENT, dated by SDK release, not the
+  service. A consumer cannot tell from any FLORA surface when a server-side
+  behaviour changed. The Go SDK and CLI have never shipped a second release, so
+  they carry no change record at all.
+current_version:
+  sdk: '@flora-ai/flora'
+  version: 0.10.0
+  date: '2026-07-09'
+  registry_published: '2026-07-10'
+window: 2026-05-12 through 2026-07-10 (the complete history — the SDK is three months old)
+entries:
+  - version: 0.10.0
+    date: '2026-07-09'
+    breaking: false
+    highlights:
+      - 'webhooks: client.webhooks.unwrap() signature-verification helper'
+      - 'mcp: restored remote code execution and hosted docs search for self-hosted builds'
+  - version: 0.9.0
+    date: '2026-07-09'
+    breaking: false
+    highlights:
+      - 'assets: assets.upload() one-call helper (url / direct-bytes / signed-url)'
+      - 'generations: generations.retrieve(run_id) exposed'
+      - 'techniques: an element can be passed as a technique input'
+      - 'api: signed webhook callbacks for technique runs; webhook fires on generate-run terminal state'
+      - 'api: direct-bytes upload, SSRF-safe URL fetch, symmetric project_id, upfront limits'
+      - 'actions: action param values enforced against their schema; v2 browser actions released, legacy twins unlisted'
+      - 'mcp: OAuth resource metadata added'
+    note: >-
+      The webhook surface this profile documents (asyncapi/flora-fauna-webhooks.yml)
+      landed here — signed callbacks are roughly one month old.
+  - version: 0.8.1
+    date: '2026-06-17'
+    breaking: false
+    highlights:
+      - 'client: send content-type header for requests with an omitted optional body'
+  - version: 0.8.0
+    date: '2026-06-12'
+    breaking: false
+    highlights:
+      - 'elements-v2: server-side guards for reference generation'
+      - 'generations.retrieve(run_id) exposed (ENG-5104)'
+      - 'sdk: Stainless generation pipeline scaffolded'
+  - version: 0.7.1
+    date: '2026-06-03'
+    breaking: false
+    highlights:
+      - Maintenance regeneration; no public API changes.
+  - version: 0.7.0
+    date: '2026-06-03'
+    breaking: false
+    highlights:
+      - 'generations & technique runs: client.generations.list() and client.techniques.runs.list() with cursor auto-pagination'
+      - 'techniques: run outputs can carry text content alongside media URLs'
+      - 'config: the deprecated /runs/* endpoints hidden from the docs while still generated in the SDK for backwards compatibility'
+      - 'docs: README repointed at developer.flora.ai; stale MCP install instructions dropped'
+    note: >-
+      Two things worth flagging. First, this is where the list endpoints the MCP
+      tools reference advertises came from — and they are still absent from the
+      published OpenAPI, which is why mcp/flora-fauna-tool-crosswalk.yml records
+      them as unbound. Second, FLORA states here that /runs/* is DEPRECATED and
+      hidden from the docs, while the published spec describes POST /runs/technique
+      as "the normalized top-level run resource" and the nested route as
+      "backward-compatible". The two statements point in opposite directions.
+  - version: 0.6.0
+    date: '2026-05-19'
+    breaking: true
+    breaking_detail: 'the client export was renamed to FLORA (all caps)'
+    highlights:
+      - 'client: exported as FLORA via custom casings'
+      - 'mcp: OAuth redirected to Clerk hosted sign-in instead of a manual API-key form'
+      - 'mcp: Cloudflare Worker moved to its own repo (florafauna-ai/flora-mcp-worker)'
+      - 'chore: OpenAPI spec synced from flora-frontend main'
+  - version: 0.5.0
+    date: '2026-05-18'
+    breaking: false
+    highlights:
+      - 'mcp: MCP server authenticated through Clerk OAuth authorization flow'
+  - version: 0.4.0
+    date: '2026-05-18'
+    breaking: false
+    highlights:
+      - 'mcp: Cloudflare Worker generated so the MCP server can deploy to the edge'
+  - version: 0.3.0
+    date: '2026-05-15'
+    breaking: false
+    highlights:
+      - 'mcp: OAuth protected-resource metadata served for client discovery'
+      - 'refresh against the latest API — expanded run actions, updated technique parameters'
+      - 'feedback endpoint hidden from non-MCP SDK outputs'
+  - version: 0.2.0
+    date: '2026-05-13'
+    breaking: false
+    highlights:
+      - asset upload and run resources refreshed against the latest OpenAPI
+      - tooling added to pull and update the OpenAPI spec
+  - version: 0.1.0
+    date: '2026-05-12'
+    breaking: false
+    highlights:
+      - First minor release of the FLORA TypeScript SDK.
+related_repositories:
+  - {repo: 'https://github.com/florafauna-ai/flora-typescript', role: TypeScript SDK, releases: 13}
+  - {repo: 'https://github.com/florafauna-ai/flora-go', role: Go SDK, releases: 1}
+  - {repo: 'https://github.com/florafauna-ai/flora-cli', role: Go CLI, releases: 1}
+  - {repo: 'https://github.com/florafauna-ai/flora-mcp-worker', role: 'MCP Cloudflare Worker (referenced in the 0.6.0 changelog; not visible in the public org listing)'}

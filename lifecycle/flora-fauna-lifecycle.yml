@@ -1,0 +1,112 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://status.flora.ai (probed 200, Atlassian Statuspage), the version and
+  operation descriptions in openapi/flora-fauna-flora-api-openapi.yml,
+  https://docs.flora.ai/more/mcp (which announces the legacy /mcp endpoint's
+  deprecation), FLORA's SDK repositories under https://github.com/florafauna-ai,
+  and probes for a changelog page on every documentation host.
+versioning:
+  scheme: path-prefix
+  current_path: /api/v1
+  spec_version: 1.6.0
+  spec_version_source: openapi/flora-fauna-flora-api-openapi.yml info.version
+  header_versioning: false
+  notes: >-
+    The base URL carries v1 and the OpenAPI carries a semver info.version that has
+    moved (1.6.0 at capture). No version-pinning request header is documented, so
+    consumers cannot pin a minor revision — the spec version is observable but not
+    selectable.
+webhook_contract_version:
+  scheme: date-based
+  observed: '2026-06-11'
+  field: api_version in the webhook payload
+  note: >-
+    FLORA versions the webhook payload contract separately from the REST path,
+    with a date string in every delivery. This is good practice and is the only
+    dated contract identifier the platform publishes.
+deprecation:
+  policy_documented: false
+  sunset_header_rfc8594: false
+  deprecated_operations_in_spec: 0
+  observed_deprecations:
+    - subject: 'MCP beta endpoint https://app.flora.ai/mcp'
+      state: deprecated
+      announced_at: https://docs.flora.ai/more/mcp
+      replacement: https://agents.flora.ai/mcp
+      sunset_date: null
+      probed_status: 404
+      note: >-
+        Already removed, not merely deprecated — the legacy path returns 404. The
+        announcement carries no sunset date and no migration window; the notice and
+        the removal appear to have shipped together.
+    - subject: 'The /runs/* route family (POST /runs/technique, /runs/generation, /runs/action)'
+      state: contradictory
+      evidence:
+        - >-
+          The TypeScript SDK changelog for 0.7.0 (2026-06-03) records a chore:
+          "hide the deprecated /runs/* endpoints from the docs while keeping them
+          generated in the SDK for backwards compatibility."
+        - >-
+          The published OpenAPI says the opposite: POST /runs/technique is
+          described as "the normalized top-level run resource", while
+          POST /techniques/{techniqueId}/runs is "the backward-compatible nested
+          route".
+      sunset_date: null
+      deprecated_flag_set: false
+      note: >-
+        FLORA's two sources point in opposite directions about which run route is
+        the future and which is legacy, and neither sets `deprecated: true` on any
+        operation — so no linter, SDK generator or agent can see a deprecation at
+        all. Recorded as a contradiction rather than resolved, because the
+        provider has not resolved it. The developer site's own reference still
+        documents both families.
+    - subject: 'Styles (product feature)'
+      state: deprecated
+      evidence: 'https://docs.flora.ai/faqs-how-to.../styles — titled "Styles (deprecated)" in the published llms.txt index.'
+      note: Product-surface deprecation, not an API contract change.
+  assessment: >-
+    FLORA does deprecate things and does announce them, but there is no published
+    deprecation POLICY, no notice period, no Sunset/Deprecation response headers,
+    and no `deprecated: true` in the contract. Every signal is prose a human has to
+    read.
+changelog:
+  url: null
+  probed:
+    - {url: 'https://developer.flora.ai/changelog', status: 404}
+    - {url: 'https://docs.flora.ai/changelog', status: 404}
+    - {url: 'https://flora.ai/changelog', status: 404}
+  substitutes:
+    - {url: 'https://github.com/florafauna-ai/flora-typescript/blob/main/CHANGELOG.md', scope: 'TypeScript SDK releases (13 versions since 2026-05-12)'}
+    - {url: 'https://github.com/florafauna-ai/flora-go/blob/main/CHANGELOG.md', scope: 'Go SDK (one tagged version)'}
+    - {url: 'https://github.com/florafauna-ai/flora-cli/blob/main/CHANGELOG.md', scope: 'Go CLI (one tagged version)'}
+  note: >-
+    No dated API changelog is published anywhere on FLORA's own hosts. The only
+    dated record of API change is the release history of the generated SDK repos —
+    unusually good for a generated changelog, since the maintainers rewrite it with
+    user-facing descriptions, but it dates the client, not the service. Captured in
+    changelog/flora-fauna-changelog.yml.
+status_page:
+  url: https://status.flora.ai
+  provider: Atlassian Statuspage
+  http_status: 200
+  title: FLORA Status
+  rss: null
+  note: Served on the provider's own subdomain.
+sla:
+  documented: false
+  note: >-
+    No uptime SLA, credit schedule or support-response commitment is published for
+    self-serve plans. Enterprise is "Custom" with no public terms.
+support:
+  email: support@florafauna.ai
+  api_onboarding_call: https://cal.com/harishv/30min
+  note: >-
+    Unusually, the API getting-started page opens with a booking link for a live
+    onboarding call — a high-touch signal for an API this young.
+maturity:
+  api_public_since: '2026-05'
+  evidence: >-
+    First TypeScript SDK release 2026-05-12; Go SDK and CLI tagged 2026-05-20; the
+    product docs state the API and MCP server are "out of public beta".
+  stage: generally-available

@@ -1,0 +1,81 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  Live probes of https://agents.flora.ai/.well-known/oauth-authorization-server
+  (HTTP 200) and https://app.florafauna.ai/.well-known/openid-configuration
+  (HTTP 200), plus https://developer.flora.ai/mcp/authentication and
+  https://developer.flora.ai/platform/authentication. Also derived against
+  openapi/flora-fauna-flora-api-openapi.yml, which declares no oauth2 scheme.
+docs: https://developer.flora.ai/mcp/authentication
+description: >-
+  FLORA publishes OAuth on two hosts and a scope vocabulary on only one of them,
+  and neither vocabulary governs the REST API. This artifact records the real
+  shape rather than manufacturing a scope list: the REST API is workspace-wide
+  bearer-key auth with no scopes at all, the MCP authorization server omits
+  scopes_supported entirely and delegates authorization to the signed-in user's
+  existing FLORA role, and the only enumerated scopes anywhere on a FLORA host
+  are the Clerk platform scopes behind application sign-in.
+surfaces:
+  - surface: REST API
+    base_url: https://app.flora.ai/api/v1
+    auth: http bearer (sk_live_)
+    oauth2: false
+    scope_count: 0
+    note: >-
+      An API key inherits the whole workspace. There is no scope, no read-only
+      key type, and no per-resource restriction — the blast radius of a leaked
+      key is every Technique, Project, Asset and billed run in that workspace.
+  - surface: MCP server
+    base_url: https://agents.flora.ai/mcp
+    auth: OAuth 2.1 + PKCE
+    oauth2: true
+    scope_count: 0
+    scopes_supported_published: false
+    evidence:
+      url: https://agents.flora.ai/.well-known/oauth-authorization-server
+      status: 200
+      finding: >-
+        The RFC 8414 document carries issuer, authorization/token/registration/
+        revocation endpoints, grant types, auth methods and PKCE methods — but no
+        scopes_supported member. A client therefore cannot request least-privilege
+        access; it takes whatever the user already has.
+    documented_authorization_model:
+      basis: the signed-in FLORA user's role in the connected workspace
+      granted_by_default:
+        - List and read Techniques, Projects, Workspaces, Assets, Models
+        - Create runs (billed in USD to the workspace)
+        - Upload assets
+      conditional:
+        - Create or modify Projects — only if the user's FLORA role allows it
+      never_granted:
+        - Manage billing
+        - Manage workspace members
+      denial_error: 403 forbidden
+  - surface: FLORA application sign-in
+    base_url: https://app.florafauna.ai
+    auth: OpenID Connect (Clerk, issuer https://clerk.flora.ai)
+    oauth2: true
+    scope_count: 6
+    evidence:
+      url: https://app.florafauna.ai/.well-known/openid-configuration
+      status: 200
+    scopes:
+      - {name: openid, description: 'OIDC: request an ID token.'}
+      - {name: profile, description: 'OIDC: basic profile claims (name, preferred_username, picture).'}
+      - {name: email, description: 'OIDC: email and email_verified claims.'}
+      - {name: offline_access, description: 'OIDC: issue a refresh token.'}
+      - {name: public_metadata, description: 'Clerk: read the user''s public metadata object.'}
+      - {name: private_metadata, description: 'Clerk: read the user''s private metadata object.'}
+    note: >-
+      These are Clerk's scoped-access vocabulary (the document links
+      https://clerk.com/docs/oauth/scoped-access), not FLORA API permissions.
+      Recorded for completeness; do not read them as API authorization.
+summary:
+  api_scope_count: 0
+  mcp_scope_count: 0
+  application_oidc_scope_count: 6
+  finding: >-
+    Neither callable FLORA surface publishes a scope vocabulary. The gap that
+    matters most is the MCP one: a code-execution server whose single `execute`
+    tool can spend real money on the user's workspace, granted with no scope
+    negotiation at all.

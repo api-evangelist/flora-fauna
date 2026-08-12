@@ -1,0 +1,78 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://developer.flora.ai/quickstarts/cli and
+  https://github.com/florafauna-ai/flora-cli (FLORA's own GitHub organization),
+  with version metadata read from the Go module proxy.
+name: flora
+official: true
+language: Go
+repository: https://github.com/florafauna-ai/flora-cli
+docs: https://developer.flora.ai/quickstarts/cli
+reference: https://developer.flora.ai/api/cli
+version: v0.1.0
+published: '2026-05-20'
+release_count: 1
+currency_note: >-
+  One tagged release, 2026-05-20, and no re-tag since — while the TypeScript SDK
+  has shipped nine releases in the same window and the API has grown list
+  endpoints, canvas patching, actions and signed webhooks. The CLI's .stats.yml
+  pins a 23-endpoint generation. Treat it as behind the API it wraps.
+install:
+  - method: go install
+    command: go install github.com/florafauna-ai/flora-cli/cmd/flora@latest
+    note: drops a `flora` binary into $GOPATH/bin (or $GOBIN)
+  - method: goreleaser
+    note: >-
+      The repo carries a .goreleaser.yml, so binary release artifacts are built,
+      but no Homebrew tap, npm wrapper, Docker image or install script is
+      documented.
+verify: flora --version
+configuration:
+  env: FLORA_API_KEY
+  flag: --api-key
+  note: The CLI uses the REST bearer key; it does not use the MCP OAuth flow.
+command_surface:
+  style: 'resource verb, with colon-nested subresources (techniques:runs create)'
+  groups:
+    - group: workspaces
+      commands: [list]
+    - group: techniques
+      commands: [list, retrieve]
+    - group: 'techniques:runs'
+      commands: [create, retrieve]
+    - group: models
+      commands: [list]
+      note: Documented in the API reference resource list; not shown in the CLI quickstart examples.
+    - group: projects
+      commands: [list, create, retrieve]
+      note: Inferred from the shared generated command surface; not exercised in the published quickstart.
+    - group: assets
+      commands: [create, complete, retry, list, retrieve]
+      note: Inferred from the shared generated command surface; not exercised in the published quickstart.
+  documented_flags:
+    - {flag: --technique-id, applies_to: 'techniques retrieve, techniques:runs *'}
+    - {flag: --run-id, applies_to: 'techniques:runs retrieve'}
+    - {flag: --input, applies_to: 'techniques:runs create', format: 'inline object, e.g. ''{id: prompt, type: text, value: "..."}'''}
+    - {flag: --mode, applies_to: 'techniques:runs create', values: [async, stream]}
+    - {flag: --idempotency-key, applies_to: any mutation}
+    - {flag: --api-key, applies_to: global}
+    - {flag: --output, applies_to: most commands, purpose: alternative output formats}
+    - {flag: --jq, applies_to: most commands, purpose: inline JMESPath/jq-style filtering}
+    - {flag: -r, applies_to: with --jq, purpose: raw output}
+output:
+  default: JSON
+  filtering: '--jq (e.g. --jq ''.outputs[].url'' -r)'
+  errors: non-2xx responses print to stderr with the request ID and error code
+key_flows:
+  - name: run a Technique end to end
+    steps:
+      - flora techniques list
+      - flora techniques retrieve --technique-id thumbnail-v3
+      - 'flora techniques:runs create --technique-id thumbnail-v3 --input ''{...}'' --mode async'
+      - 'flora techniques:runs retrieve --technique-id thumbnail-v3 --run-id run_abc123'
+    note: The published quickstart includes a shell polling loop that branches on completed/failed.
+  - name: safe retry
+    steps:
+      - 'flora techniques:runs create ... --idempotency-key "q3-thumb-DE"'
+binary_distribution: packages/flora-fauna-packages.yml

@@ -1,0 +1,132 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay — Flora.ai API
+  version: 1.0.0
+x-generated: '2026-08-12'
+x-method: generated
+x-source: >-
+  Non-destructive enhancements over openapi/flora-fauna-flora-api-openapi.yml
+  (Flora.ai API v1.6.0, harvested verbatim from the openapi_spec_url published in
+  FLORA's own github.com/florafauna-ai/flora-go .stats.yml). Every value added
+  here is sourced from FLORA's own developer documentation at developer.flora.ai;
+  nothing is invented. The original document is never mutated.
+x-extends: openapi/flora-fauna-flora-api-openapi.yml
+actions:
+  - target: $.info
+    description: >-
+      The published document carries only title, version and license. Add the
+      description, contact and terms the developer site publishes, so the contract
+      is self-describing for an agent that never reads the HTML docs.
+    update:
+      description: >-
+        The Flora.ai public REST API drives the FLORA creative canvas
+        programmatically. Discover and run saved Techniques, start one-off model
+        generations across 50+ image, video, audio and text models, manage
+        workspaces, projects, assets and canvas nodes, and receive signed webhooks
+        when a run reaches a terminal state. API access requires a paid FLORA
+        subscription (Starter and above).
+      termsOfService: https://flora.ai/legal/terms-of-service
+      contact:
+        name: FLORA Support
+        email: support@florafauna.ai
+        url: https://developer.flora.ai/
+  - target: $.servers
+    description: >-
+      Annotate the single published server so downstream tooling records the
+      environment. FLORA documents no separate sandbox host; sk_test_ keys are
+      described as "sandbox, when available" and are not a distinct base URL.
+    update:
+      - url: https://app.flora.ai/api/v1
+        description: Production. The only base URL FLORA publishes; there is no separate sandbox host.
+  - target: $.components.securitySchemes.bearerAuth
+    description: >-
+      Record the documented key prefixes and the one-active-key-per-workspace
+      rotation constraint, which the spec's one-line "Flora API key" description
+      omits and which materially affects how an integration is built.
+    update:
+      description: >-
+        Bearer API key. Keys begin with sk_live_ (production) or sk_test_
+        (sandbox, when available) and are created in the FLORA app under
+        Settings > API Keys. Each workspace may hold exactly ONE active key at a
+        time — there is no overlap window during rotation, so a production cutover
+        must be planned. A key inherits the permissions of the workspace it was
+        created in and can never manage billing or members.
+      x-key-prefixes: [sk_live_, sk_test_]
+      x-one-active-key-per-workspace: true
+      x-rotation: revoke-then-create
+  - target: $
+    description: >-
+      Declare the cross-cutting runtime semantics OpenAPI does not express:
+      idempotency, request tracing, the error envelope, and rate-limit signaling.
+      All four are documented on developer.flora.ai and all four are invisible in
+      the contract as published.
+    update:
+      x-idempotency:
+        supported: true
+        mechanism: idempotency_key field in the JSON request body
+        alternate_mechanism: Idempotency-Key request header
+        retention: 24 hours
+        replay_indicator_header: idempotent-replayed
+        conflict: 422 idempotency_conflict when the same key is reused with a different body
+        scope: per API key
+        applies_to:
+          - POST /techniques/{techniqueId}/runs
+          - POST /runs/technique
+          - POST /generate
+          - POST /runs/generation
+          - POST /runs/action
+          - POST /assets
+          - POST /assets/{assetId}/complete
+          - POST /assets/{assetId}/retry
+          - POST /projects
+          - POST /projects/{projectId}/assets/{assetId}/attach
+          - POST /feedback
+        x-contract-conflict: >-
+          The spec and the docs disagree, and an integrator following either one
+          alone will get it wrong. Every mutating operation's description in the
+          OpenAPI says an optional Idempotency-Key HEADER is honoured and that
+          "duplicate keys within TWO HOURS return idempotency_duplicate" — and
+          idempotency_duplicate is the code carried in the spec's error enum. The
+          developer site documents an idempotency_key BODY FIELD, a TWENTY-FOUR
+          HOUR window, and 422 idempotency_conflict, a code that appears nowhere
+          in the spec. Both mechanisms are recorded here rather than picking one.
+        docs: https://developer.flora.ai/platform/idempotency
+      x-request-tracing:
+        response_header: request-id
+        format: req_*
+        docs: https://developer.flora.ai/platform/errors
+      x-error-envelope:
+        shape: '{ "error": { "code", "message", "fields"? } }'
+        rfc9457: false
+        docs: https://developer.flora.ai/platform/errors
+      x-rate-limit:
+        status: 429
+        error_code: rate_limited
+        retry_after_header: retry-after
+        scope: per workspace
+        published_numbers: false
+        docs: https://developer.flora.ai/platform/errors
+      x-webhooks:
+        supported: true
+        opt_in: per-request callback_url on run-creating operations
+        events: [run.completed, run.failed]
+        signature_header: Flora-Signature
+        signature_algorithm: HMAC-SHA256 over "{timestamp}.{rawBody}"
+        delivery_id_header: Flora-Webhook-Id
+        event_header: Flora-Event
+        payload_contract_version: '2026-06-11'
+        retries: 3 (10s, 1m, 5m) after the first attempt; 10s delivery timeout
+        docs: https://developer.flora.ai/platform/webhooks
+      x-id-prefixes:
+        workspace: ws_
+        project: prj_
+        technique: tech_
+        run: run_
+        asset: asset_
+        webhook_delivery: whd_
+        api_key: sk_live_
+        webhook_secret: whsec_
+      x-entitlement:
+        minimum_plan: Starter
+        note: The Free plan has no API or MCP access.
+        docs: https://docs.flora.ai/plans-and-billing/pricing

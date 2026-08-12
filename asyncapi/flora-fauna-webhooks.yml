@@ -1,0 +1,98 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://developer.flora.ai/platform/webhooks, plus the callback_url parameter
+  documented in openapi/flora-fauna-flora-api-openapi.yml on the run-creating
+  operations.
+asyncapi_published: false
+asyncapi_note: >-
+  FLORA publishes no AsyncAPI document, and none is fabricated here. The event
+  surface is a small, well-specified webhook catalog documented in prose; it is
+  captured below as a Webhooks artifact. Probed for a spec at
+  /asyncapi.yaml, /asyncapi.json and the docs event index — nothing served.
+description: >-
+  A deliberately minimal event surface: one terminal callback per run, opted into
+  per request rather than configured per workspace. There is no subscription
+  registry, no event catalog endpoint, and no non-terminal events — no
+  run.started, no progress. Everything else is polling.
+surface:
+  style: outbound HTTP webhook
+  registration: per-request `callback_url` field on the run-creating operation
+  registration_scope: >-
+    Per request, not workspace-wide. Different runs can point at different URLs;
+    there is no console-managed endpoint list and therefore no way to enumerate,
+    disable or replay deliveries centrally.
+  applies_to:
+    - POST /generate
+    - POST /techniques/{techniqueId}/runs
+  transport: HTTPS POST only
+  content_type: application/json
+events:
+  - name: run.completed
+    when: The run finished successfully.
+  - name: run.failed
+    when: The run terminated with an error.
+event_count: 2
+payload:
+  contract_version_field: api_version
+  contract_version_observed: '2026-06-11'
+  byte_stability: >-
+    The provider states the body is byte-stable across retries, so a single
+    recorded signature stays valid for every attempt.
+  carries_outputs: false
+  carries_outputs_note: >-
+    The payload deliberately carries the run's identity and terminal status only.
+    Outputs must be fetched from the run endpoint keyed by data.run_id — a webhook
+    is a "go read it now" nudge, not a result delivery.
+  fields:
+    id: 'string, whd_ prefixed — unique per delivery; dedupe on this'
+    type: run.completed | run.failed
+    api_version: date-based payload contract version
+    created_at: unix milliseconds
+    data.run_id: public run identifier (run_ prefixed)
+    data.run_type: generation | technique
+    data.workspace_id: ws_ prefixed
+    data.status: completed | failed
+    data.error_code: present on failure
+    data.error_message: present on failure, when available
+headers:
+  - {name: Flora-Signature, example: 't=1733952000,v1=<hex>', purpose: 'timestamp + HMAC-SHA256 hex of the body'}
+  - {name: Flora-Webhook-Id, example: whd_abc123, purpose: stable delivery id, mirrors payload id}
+  - {name: Flora-Event, example: run.completed, purpose: event type, mirrors payload type}
+security:
+  signing:
+    algorithm: HMAC-SHA256
+    signed_message: '"{t}.{rawBody}" — unix-seconds timestamp, a literal dot, then the exact raw body'
+    secret_prefix: whsec_
+    secret_scope: per workspace
+    secret_visibility: shown once, in the API Key Created dialog
+    replay_window_default: 300 seconds (5 minutes), enforced by the SDK helper
+    sdk_helper: client.webhooks.unwrap(body, headers, secret, options?)
+    sdk_helper_since: '@flora-ai/flora 0.9.0 (2026-07-09)'
+    verification_caveat: >-
+      Verify against RAW request body bytes. Parsing and re-serializing changes
+      the bytes and invalidates the signature.
+  ssrf_controls:
+    https_only: true
+    rejects_private_targets: >-
+      localhost, *.local / *.internal, cloud-metadata hostnames, and
+      private/loopback/link-local IP literals (IPv4 and IPv6) are rejected at
+      registration.
+    follows_redirects: false
+    rationale_published: >-
+      FLORA states it does not follow 3xx so a redirect cannot bounce a delivery to
+      an internal host. This is a stronger, more explicitly reasoned SSRF posture
+      than most webhook surfaces in the catalog publish.
+delivery:
+  method: POST
+  timeout: 10s
+  attempts_total: 4
+  retries: 3
+  retry_schedule: [10s, 1m, 5m]
+  failure_terminal: after the last retry, the delivery is marked terminally failed and shown in the Usage tab
+  guarantee: at-least-once
+  dedupe_key: payload id / Flora-Webhook-Id
+  ack_requirement: respond 2xx quickly; heavy processing must be asynchronous
+cross_links:
+  errors: errors/flora-fauna-problem-types.yml
+  conventions: conventions/flora-fauna-conventions.yml

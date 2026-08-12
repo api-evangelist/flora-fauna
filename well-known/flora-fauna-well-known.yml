@@ -1,0 +1,132 @@
+generated: '2026-08-12'
+method: probed
+source: live GET probes of /.well-known/ on every FLORA host named in apis.yml, in
+  the OpenAPI servers[] block, and in the developer documentation
+description: >-
+  FLORA serves real /.well-known documents on two hosts. agents.flora.ai (the MCP
+  server) publishes both RFC 8414 authorization-server metadata and RFC 9728
+  protected-resource metadata — including the per-resource variant at
+  /.well-known/oauth-protected-resource/mcp advertised in the 401
+  WWW-Authenticate challenge — which is what lets an MCP client complete OAuth
+  2.1 discovery with no out-of-band configuration. app.florafauna.ai serves the
+  Clerk-hosted OIDC discovery and OAuth authorization-server documents for the
+  FLORA application itself (issuer https://clerk.flora.ai). No security.txt,
+  api-catalog or ai-plugin.json is served anywhere.
+hosts:
+  - host: https://agents.flora.ai
+    role: MCP server
+    documents:
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        content_type: application/json
+        file: flora-fauna-agents-oauth-authorization-server.json
+        spec: RFC 8414
+        note: >-
+          issuer https://agents.flora.ai; authorization/token/register endpoints;
+          authorization_code + refresh_token; PKCE plain and S256. Dynamic client
+          registration (RFC 7591) is open at /register, which is what makes
+          one-command MCP installs work.
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        content_type: application/json
+        file: flora-fauna-agents-oauth-protected-resource.json
+        spec: RFC 9728
+      - path: /.well-known/oauth-protected-resource/mcp
+        status: 200
+        content_type: application/json
+        file: flora-fauna-agents-oauth-protected-resource-mcp.json
+        spec: RFC 9728
+        note: >-
+          The exact resource_metadata URL returned in the WWW-Authenticate header
+          of an unauthenticated POST to /mcp.
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+  - host: https://app.florafauna.ai
+    role: application / API host (alias of app.flora.ai)
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: application/json
+        file: flora-fauna-app-openid-configuration.json
+        spec: OpenID Connect Discovery 1.0
+        note: >-
+          Clerk-hosted. issuer https://clerk.flora.ai; scopes email, profile,
+          public_metadata, private_metadata, openid, offline_access; RS256; PKCE
+          S256. This is end-user application sign-in, NOT the REST API's auth —
+          the REST API uses bearer sk_live_ keys.
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        content_type: application/json
+        file: flora-fauna-app-oauth-authorization-server.json
+        spec: RFC 8414
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://developer.flora.ai
+    role: developer portal
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://docs.florafauna.ai
+    role: product documentation (GitBook)
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://flora.ai
+    role: marketing website (Framer)
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+summary:
+  documents_served: 5
+  hosts_probed: 5
+  security_txt: false
+  api_catalog: false
+  agent_card: false
