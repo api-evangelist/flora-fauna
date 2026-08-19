@@ -1,41 +1,35 @@
 generated: '2026-08-12'
 method: searched
 status: published
-source: >-
-  https://developer.flora.ai/mcp and https://developer.flora.ai/mcp/tools
-  (FLORA's own developer site), corroborated by a live probe of
-  https://agents.flora.ai/mcp and its RFC 8414 / RFC 9728 discovery documents.
+source: https://developer.flora.ai/mcp and https://developer.flora.ai/mcp/tools (FLORA's own developer
+  site), corroborated by a live probe of https://agents.flora.ai/mcp and its RFC 8414 / RFC 9728 discovery
+  documents.
 probe:
   url: https://agents.flora.ai/mcp
   method: POST
   body: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
   http_status: 401
-  www_authenticate: >-
-    Bearer realm="OAuth", error="invalid_token",
-    error_description="Missing or invalid access token",
-    resource_metadata="https://agents.flora.ai/.well-known/oauth-protected-resource/mcp"
+  www_authenticate: Bearer realm="OAuth", error="invalid_token", error_description="Missing or invalid
+    access token", resource_metadata="https://agents.flora.ai/.well-known/oauth-protected-resource/mcp"
   fetched: '2026-08-12'
-  note: >-
-    tools/list is OAuth-gated, so the live inputSchema for each tool could not be
-    read anonymously. The tool names, arguments and constraints below are taken
-    verbatim from FLORA's published tools reference, not guessed. Full schemas
-    require an authenticated introspection.
+  note: tools/list is OAuth-gated, so the live inputSchema for each tool could not be read anonymously.
+    The tool names, arguments and constraints below are taken verbatim from FLORA's published tools reference,
+    not guessed. Full schemas require an authenticated introspection.
 server:
   name: flora
   vendor_operated: true
-  transport: http           # streamable HTTP; "http" in client configs
+  transport: http
   url: https://agents.flora.ai/mcp
   sse_url: null
   protocol: Model Context Protocol
   deprecated_endpoints:
-    - url: https://app.flora.ai/mcp
-      note: >-
-        FLORA's product docs state "the legacy /mcp beta endpoint has been
-        deprecated" and direct clients to the /api/v1-backed install URL on the
-        developer site. Probed 2026-08-12: 404.
-      status: 404
+  - url: https://app.flora.ai/mcp
+    note: 'FLORA''s product docs state "the legacy /mcp beta endpoint has been deprecated" and direct
+      clients to the /api/v1-backed install URL on the developer site. Probed 2026-08-12: 404.'
+    status: 404
 auth:
-  methods: [oauth2]
+  methods:
+  - oauth2
   oauth2:
     version: OAuth 2.1
     authorization_server: https://agents.flora.ai
@@ -43,84 +37,106 @@ auth:
     token_endpoint: https://agents.flora.ai/token
     registration_endpoint: https://agents.flora.ai/register
     revocation_endpoint: https://agents.flora.ai/token
-    grant_types: [authorization_code, refresh_token]
-    pkce: [S256, plain]
+    grant_types:
+    - authorization_code
+    - refresh_token
+    pkce:
+    - S256
+    - plain
     dynamic_client_registration: true
     scopes_supported: null
-    scopes_note: >-
-      The authorization-server metadata does not enumerate scopes_supported. The
-      docs describe the grant in terms of the signed-in user's existing FLORA
-      role: the MCP connection inherits exactly what that user can do in the
-      workspace, and cannot manage billing or workspace members at all.
+    scopes_note: 'The authorization-server metadata does not enumerate scopes_supported. The docs describe
+      the grant in terms of the signed-in user''s existing FLORA role: the MCP connection inherits exactly
+      what that user can do in the workspace, and cannot manage billing or workspace members at all.'
     discovery:
       authorization_server: well-known/flora-fauna-agents-oauth-authorization-server.json
       protected_resource: well-known/flora-fauna-agents-oauth-protected-resource.json
       protected_resource_mcp: well-known/flora-fauna-agents-oauth-protected-resource-mcp.json
   api_key_alternative:
     supported: false
-    note: >-
-      Unlike most MCP servers in the catalog, FLORA does NOT accept its REST
-      sk_live_ API key on the MCP endpoint. The docs are explicit that the two
-      auth paths are independent: API keys for server-side automation, OAuth for
-      interactive agents.
+    note: 'Unlike most MCP servers in the catalog, FLORA does NOT accept its REST sk_live_ API key on
+      the MCP endpoint. The docs are explicit that the two auth paths are independent: API keys for server-side
+      automation, OAuth for interactive agents.'
 tool_count: 2
 tool_model: code-execution
-tool_model_note: >-
-  FLORA deliberately does not wrap one endpoint per tool. It exposes two tools and
-  lets the agent write TypeScript against a pre-authenticated @flora-ai/flora SDK
-  client inside `execute`. The effective capability surface is therefore the SDK
-  method surface (see mcp/flora-fauna-tool-crosswalk.yml), not the tool count.
+tool_model_note: FLORA deliberately does not wrap one endpoint per tool. It exposes two tools and lets
+  the agent write TypeScript against a pre-authenticated @flora-ai/flora SDK client inside `execute`.
+  The effective capability surface is therefore the SDK method surface (see mcp/flora-fauna-tool-crosswalk.yml),
+  not the tool count.
 tools:
-  - name: search_docs
-    category: discovery
-    description: >-
-      Searches the @flora-ai/flora SDK documentation to find the right method, its
-      parameter shapes, and usage examples. The agent calls this before writing
-      code when unsure of a method name, argument structure, or return type.
-    arguments:
-      - {name: query, type: string, required: true, description: Natural-language question or method name to look up}
-      - {name: language, type: string, required: false, description: 'Target language, e.g. "typescript"'}
-  - name: execute
-    category: execution
-    description: >-
-      Runs a TypeScript snippet in a sandbox against a pre-authenticated
-      @flora-ai/flora client. The agent defines `async function run(client) { ... }`
-      and the server invokes it, returning the value plus any console.log output.
-    arguments:
-      - {name: code, type: string, required: true, description: 'TypeScript source defining async function run(client). Exact argument name is not published; schema requires authenticated tools/list.'}
-    constraints:
-      state_persistence: none — each execute call is isolated
-      http_request_timeout: 30s
-      total_execution_timeout: ~5 minutes
+- name: search_docs
+  category: discovery
+  description: Searches the @flora-ai/flora SDK documentation to find the right method, its parameter
+    shapes, and usage examples. The agent calls this before writing code when unsure of a method name,
+    argument structure, or return type.
+  arguments:
+  - name: query
+    type: string
+    required: true
+    description: Natural-language question or method name to look up
+  - name: language
+    type: string
+    required: false
+    description: Target language, e.g. "typescript"
+- name: execute
+  category: execution
+  description: Runs a TypeScript snippet in a sandbox against a pre-authenticated @flora-ai/flora client.
+    The agent defines `async function run(client) { ... }` and the server invokes it, returning the value
+    plus any console.log output.
+  arguments:
+  - name: code
+    type: string
+    required: true
+    description: TypeScript source defining async function run(client). Exact argument name is not published;
+      schema requires authenticated tools/list.
+  constraints:
+    state_persistence: none — each execute call is isolated
+    http_request_timeout: 30s
+    total_execution_timeout: ~5 minutes
 client_namespacing:
-  claude_code: [flora:execute, flora:search_docs]
-  cursor: [flora.execute, flora.search_docs]
+  claude_code:
+  - flora:execute
+  - flora:search_docs
+  cursor:
+  - flora.execute
+  - flora.search_docs
 install:
   claude_code: claude mcp add --transport http flora https://agents.flora.ai/mcp
   generic_json: '{"mcpServers":{"flora":{"type":"http","url":"https://agents.flora.ai/mcp"}}}'
   stdio_bridge: npx -y mcp-remote https://agents.flora.ai/mcp
   documented_clients:
-    - Claude (web + Desktop connector)
-    - Claude Code
-    - OpenAI Codex
-    - Cursor
-    - VS Code
-    - Hermes Agent (Nous Research)
-    - OpenClaw
-    - any client supporting streamable HTTP + OAuth 2.1
+  - Claude (web + Desktop connector)
+  - Claude Code
+  - OpenAI Codex
+  - Cursor
+  - VS Code
+  - Hermes Agent (Nous Research)
+  - OpenClaw
+  - any client supporting streamable HTTP + OAuth 2.1
 entitlement:
   required_plan: Starter
-  note: >-
-    FLORA's pricing docs state the Free plan has "no FLORA API or MCP"; both start
-    on Starter ($18/mo). MCP runs bill in USD against the same workspace budget as
-    the app, at the same published model rates.
+  note: FLORA's pricing docs state the Free plan has "no FLORA API or MCP"; both start on Starter ($18/mo).
+    MCP runs bill in USD against the same workspace budget as the app, at the same published model rates.
 errors:
-  - {code: invalid_token, http: 401, meaning: OAuth token expired or revoked; reconnect the client}
-  - {code: insufficient_credits, http: 402, meaning: workspace USD balance too low to start the run}
-  - {code: forbidden, http: 403, meaning: the signed-in FLORA user lacks permission for the operation}
-  - {code: rate_limited, http: 429, meaning: workspace rate limit; the docs say it is rare interactively and common in batches}
+- code: invalid_token
+  http: 401
+  meaning: OAuth token expired or revoked; reconnect the client
+- code: insufficient_credits
+  http: 402
+  meaning: workspace USD balance too low to start the run
+- code: forbidden
+  http: 403
+  meaning: the signed-in FLORA user lacks permission for the operation
+- code: rate_limited
+  http: 429
+  meaning: workspace rate limit; the docs say it is rare interactively and common in batches
 registry_listings: []
-registry_note: >-
-  No listing was found in a public MCP registry, the Claude connector directory,
-  or the ChatGPT apps directory as of 2026-08-12. Distribution is via the
-  provider's own install pages.
+registry_note: No listing was found in a public MCP registry, the Claude connector directory, or the ChatGPT
+  apps directory as of 2026-08-12. Distribution is via the provider's own install pages.
+deployment:
+  mode: remote
+  endpoint: https://agents.flora.ai/mcp
+  verified: probed
+  probe: gated
+  checked: '2026-08-12'
+  source: catalog MCP census

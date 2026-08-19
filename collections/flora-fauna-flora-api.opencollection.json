@@ -1,0 +1,694 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Flora.ai API",
+    "version": "1.6.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Actions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List actions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/actions"
+          },
+          "docs": "Returns released prebuilt Flora actions that can be executed by the public API. Action identifiers are raw slugs such as rotate-image, not action-prefixed IDs."
+        },
+        {
+          "info": {
+            "name": "Get an action",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/actions/:actionId",
+            "params": [
+              {
+                "name": "actionId",
+                "value": "",
+                "type": "path",
+                "description": "Action identifier"
+              }
+            ]
+          },
+          "docs": "Returns metadata for one released prebuilt Flora action. Action identifiers are raw slugs such as rotate-image, not action-prefixed IDs."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Workspaces",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List accessible workspaces",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/workspaces"
+          },
+          "docs": "Returns the workspaces available to the authenticated public API key, including each workspace's public ID, name, creation timestamp, and caller role."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Projects",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List workspace projects",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/projects",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor for fetching the next page"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Search query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Workspace identifier"
+              }
+            ]
+          },
+          "docs": "Returns projects in the requested workspace that are accessible to the authenticated public API key, ordered by recent activity."
+        },
+        {
+          "info": {
+            "name": "Create a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/projects",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new Flora project in the requested workspace. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        },
+        {
+          "info": {
+            "name": "Get a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/projects/:projectId",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project identifier"
+              }
+            ]
+          },
+          "docs": "Returns metadata for a single project when it is accessible to the authenticated public API key. Missing and inaccessible projects both return 404."
+        },
+        {
+          "info": {
+            "name": "Get project canvas",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/projects/:projectId/canvas",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project identifier"
+              }
+            ]
+          },
+          "docs": "Returns the current project canvas topology as a Mermaid flowchart using the same serializer as the Fauna agent."
+        },
+        {
+          "info": {
+            "name": "Patch project canvas",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://app.flora.ai/api/v1/projects/:projectId/canvas",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project identifier"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Applies a Mermaid flowchart patch to the project canvas using the same create_workflow path as the Fauna agent. The diagram may add nodes, connect nodes, and reference existing canvas nodes by their Mermaid short IDs."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Canvas",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a canvas action",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/projects/:projectId/actions",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project identifier"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a prebuilt action node on a project canvas using a raw action slug."
+        },
+        {
+          "info": {
+            "name": "Run a canvas action",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/projects/:projectId/actions/:nodeId/run",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project identifier"
+              },
+              {
+                "name": "nodeId",
+                "value": "",
+                "type": "path",
+                "description": "Canvas action node identifier"
+              }
+            ]
+          },
+          "docs": "Runs an existing canvas action node through the action execution workflow."
+        },
+        {
+          "info": {
+            "name": "List project canvas nodes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/projects/:projectId/nodes",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project identifier"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor for fetching the next page"
+              }
+            ]
+          },
+          "docs": "Returns sanitized visible media nodes on a project canvas. The response omits raw graph documents, Liveblocks internals, raw Convex IDs, and unbounded node data blobs."
+        },
+        {
+          "info": {
+            "name": "Attach an asset to a canvas",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/projects/:projectId/assets/:assetId/attach",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project identifier"
+              },
+              {
+                "name": "assetId",
+                "value": "",
+                "type": "path",
+                "description": "Asset identifier"
+              }
+            ]
+          },
+          "docs": "Attaches an existing ready asset to a project canvas as a static media node. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Models",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List available models",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/models",
+            "params": [
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Model type"
+              }
+            ]
+          },
+          "docs": "Returns the public model catalog visible to API clients. Use the optional type filter to narrow results to image, video, audio, or text models."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Techniques",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List techniques",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/techniques",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor for fetching the next page"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Search query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Workspace identifier"
+              }
+            ]
+          },
+          "docs": "Returns reusable Flora techniques visible to the authenticated public API key. Use workspace_id, query, cursor, and limit to filter the catalog."
+        },
+        {
+          "info": {
+            "name": "Get a technique",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/techniques/:techniqueId",
+            "params": [
+              {
+                "name": "techniqueId",
+                "value": "",
+                "type": "path",
+                "description": "Technique identifier or slug"
+              }
+            ]
+          },
+          "docs": "Returns the public definition for one technique, including its input and output schema used to start runs."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Technique Runs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Start a technique run",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/techniques/:techniqueId/runs",
+            "params": [
+              {
+                "name": "techniqueId",
+                "value": "",
+                "type": "path",
+                "description": "Technique identifier or slug"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts a run for a specific technique using the backward-compatible nested route. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        },
+        {
+          "info": {
+            "name": "Get a technique run",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/techniques/:techniqueId/runs/:runId",
+            "params": [
+              {
+                "name": "techniqueId",
+                "value": "",
+                "type": "path",
+                "description": "Technique identifier or slug"
+              },
+              {
+                "name": "runId",
+                "value": "",
+                "type": "path",
+                "description": "Run identifier"
+              }
+            ]
+          },
+          "docs": "Returns status, progress, outputs, and error details for a technique run when it is accessible to the authenticated public API key."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Assets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List assets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/assets",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Opaque cursor for fetching the next page"
+              },
+              {
+                "name": "query",
+                "value": "",
+                "type": "query",
+                "description": "Search query"
+              },
+              {
+                "name": "workspace_id",
+                "value": "",
+                "type": "query",
+                "description": "Workspace identifier"
+              },
+              {
+                "name": "project_id",
+                "value": "",
+                "type": "query",
+                "description": "Project identifier"
+              }
+            ]
+          },
+          "docs": "Returns assets visible to the authenticated public API key. Filter by workspace, project canvas, search query, cursor, and limit without exposing raw file bytes or internal graph data."
+        },
+        {
+          "info": {
+            "name": "Create an asset upload",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/assets",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates an asset from an allowlisted source URL or reserves a signed upload URL. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        },
+        {
+          "info": {
+            "name": "Get an asset",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/assets/:assetId",
+            "params": [
+              {
+                "name": "assetId",
+                "value": "",
+                "type": "path",
+                "description": "Asset identifier"
+              }
+            ]
+          },
+          "docs": "Returns metadata for one asset when it is accessible to the authenticated public API key. Missing and inaccessible assets both return 404."
+        },
+        {
+          "info": {
+            "name": "Complete a signed asset upload",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/assets/:assetId/complete",
+            "params": [
+              {
+                "name": "assetId",
+                "value": "",
+                "type": "path",
+                "description": "Asset identifier"
+              }
+            ]
+          },
+          "docs": "Marks a signed asset upload as complete after the file has been uploaded. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        },
+        {
+          "info": {
+            "name": "Retry a signed asset upload",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/assets/:assetId/retry",
+            "params": [
+              {
+                "name": "assetId",
+                "value": "",
+                "type": "path",
+                "description": "Asset identifier"
+              }
+            ]
+          },
+          "docs": "Creates a fresh signed upload reservation for a failed or expired asset upload. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Runs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a run",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://app.flora.ai/api/v1/runs/:runId",
+            "params": [
+              {
+                "name": "runId",
+                "value": "",
+                "type": "path",
+                "description": "Run identifier"
+              }
+            ]
+          },
+          "docs": "Returns status and completed output URLs for a public API run, including action runs started through POST /runs/action."
+        },
+        {
+          "info": {
+            "name": "Start an action run",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/runs/action",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts a headless prebuilt action run using raw action slugs such as rotate-image. Direct action runs do not create or mutate canvas nodes. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        },
+        {
+          "info": {
+            "name": "Start a generation run",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/runs/generation",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts a model generation run in a project canvas using a prompt, workspace, project, optional model, and optional model parameters. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        },
+        {
+          "info": {
+            "name": "Start a top-level technique run",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/runs/technique",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts a technique run through the normalized top-level run resource. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Feedback",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Record product feedback",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/feedback",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Records product feedback from the authenticated user, optionally linked to a workspace, project, run, and attempted tools. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Generations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Start a generation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://app.flora.ai/api/v1/generate",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts a model generation using a prompt, workspace, project, optional model, and optional model parameters. Poll the returned run_id via GET /runs/{runId} for progress and outputs. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
