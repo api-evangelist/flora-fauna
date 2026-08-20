@@ -51,6 +51,32 @@ tags:
   - Infinite Canvas
   - Node-Based Workflows
   - Creative Workspace
+  - Image-Generation
+  - Video Generation
+  - Text-to-Image
+  - Text-to-Video
+  - AI Agents
+  - Multimodal AI
+  - Design Tools
+  - Creative Professionals
+  - Advertising
+  - Film
+  - Fashion
+  - Branding
+  - VFX
+  - Photography
+  - Architecture
+  - Motion Design
+  - FAUNA
+  - MCP
+  - Agent Tools
+  - Workflow-Automation
+tags_raw:
+  - Creative AI
+  - Generative AI
+  - Infinite Canvas
+  - Node-Based Workflows
+  - Creative Workspace
   - Image Generation
   - Video Generation
   - Text-to-Image
@@ -89,6 +115,17 @@ apis:
     humanURL: https://developer.flora.ai/
     baseURL: https://app.flora.ai/api/v1
     tags:
+      - Techniques
+      - Technique Runs
+      - Generations
+      - Assets
+      - Project
+      - Canvas
+      - Actions
+      - Models
+      - Workspaces
+      - Feedback
+    tags_raw:
       - Techniques
       - Technique Runs
       - Generations
