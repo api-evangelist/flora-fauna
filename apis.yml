@@ -102,85 +102,314 @@ created: '2026-05-25'
 modified: '2026-08-12'
 specificationVersion: '0.23'
 apis:
-  - aid: flora-fauna:flora-api
-    name: Flora.ai API
-    description: >-
-      The Flora.ai public REST API (v1.6.0) exposes the FLORA creative canvas
-      programmatically: discover and run saved Techniques, start one-off model
-      generations, list the model catalog, manage workspaces and projects,
-      upload assets through signed URLs, read and patch the project canvas as a
-      Mermaid graph, and run prebuilt canvas actions. Bearer API-key auth
-      (sk_live_ prefix), optional idempotency keys on mutations, and optional
-      signed HMAC-SHA256 webhooks on run completion.
-    humanURL: https://developer.flora.ai/
-    baseURL: https://app.flora.ai/api/v1
-    tags:
-      - Techniques
-      - Technique Runs
-      - Generations
-      - Assets
-      - Project
-      - Canvas
-      - Actions
-      - Models
-      - Workspaces
-      - Feedback
-    tags_raw:
-      - Techniques
-      - Technique Runs
-      - Generations
-      - Assets
-      - Projects
-      - Canvas
-      - Actions
-      - Models
-      - Workspaces
-      - Feedback
-    properties:
-      - type: OpenAPI
-        url: openapi/flora-fauna-flora-api-openapi.yml
-      - type: Overlay
-        url: overlays/flora-fauna-flora-api-overlay.yaml
-      - type: Documentation
-        url: https://developer.flora.ai/api
-      - type: APIReference
-        url: https://developer.flora.ai/reference/resources/techniques
-      - type: GettingStarted
-        url: https://developer.flora.ai/api
-      - type: Authentication
-        url: authentication/flora-fauna-authentication.yml
-      - type: ErrorCatalog
-        url: errors/flora-fauna-problem-types.yml
-      - type: DataModel
-        url: data-model/flora-fauna-data-model.yml
-      - type: Conventions
-        url: conventions/flora-fauna-conventions.yml
-      - type: RateLimits
-        url: rate-limits/flora-fauna-rate-limits.yml
-  - aid: flora-fauna:flora-mcp
-    name: FLORA MCP Server
-    description: >-
-      FLORA's hosted remote Model Context Protocol server. Streamable HTTP at
-      https://agents.flora.ai/mcp, authenticated with OAuth 2.1 + PKCE
-      (RFC 8414 authorization-server metadata and RFC 9728 protected-resource
-      metadata both served). It exposes exactly two tools — search_docs and
-      execute — where execute runs a TypeScript snippet against a
-      pre-authenticated @flora-ai/flora SDK client, so the whole REST surface is
-      reachable through one tool rather than one tool per endpoint.
-    humanURL: https://developer.flora.ai/mcp
-    baseURL: https://agents.flora.ai/mcp
-    tags:
-      - MCP
-      - Agent Tools
-    properties:
-      - type: MCPServer
-        url: mcp/flora-fauna-mcp.yml
-      - type: ToolCrosswalk
-        url: mcp/flora-fauna-tool-crosswalk.yml
-      - type: Documentation
-        url: https://developer.flora.ai/mcp
-      - type: APIReference
-        url: https://developer.flora.ai/mcp/tools
+- aid: flora-fauna:flora-mcp
+  name: FLORA MCP Server
+  description: >-
+    FLORA's hosted remote Model Context Protocol server. Streamable HTTP at https://agents.flora.ai/mcp,
+    authenticated with OAuth 2.1 + PKCE (RFC 8414 authorization-server metadata and RFC 9728 protected-resource
+    metadata both served). It exposes exactly two tools — search_docs and execute — where execute runs
+    a TypeScript snippet against a pre-authenticated @flora-ai/flora SDK client, so the whole REST surface
+    is reachable through one tool rather than one tool per endpoint.
+  humanURL: https://developer.flora.ai/mcp
+  baseURL: https://agents.flora.ai/mcp
+  tags:
+  - MCP
+  - Agent Tools
+  properties:
+  - type: MCPServer
+    url: mcp/flora-fauna-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/flora-fauna-tool-crosswalk.yml
+  - type: Documentation
+    url: https://developer.flora.ai/mcp
+  - type: APIReference
+    url: https://developer.flora.ai/mcp/tools
+- aid: flora-fauna:flora-fauna-actions-api
+  name: FLORA Actions API
+  description: Prebuilt action catalog endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Actions
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-actions-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-assets-api
+  name: FLORA Assets API
+  description: Asset upload and retrieval endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Assets
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-assets-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-canvas-api
+  name: FLORA Canvas API
+  description: Project canvas endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Canvas
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-canvas-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-feedback-api
+  name: FLORA Feedback API
+  description: Product feedback endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Feedback
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-feedback-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-generations-api
+  name: FLORA Generations API
+  description: Generation endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Generations
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-generations-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-models-api
+  name: FLORA Models API
+  description: Model catalog endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Models
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-models-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-projects-api
+  name: FLORA Projects API
+  description: Project management endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Projects
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-projects-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-runs-api
+  name: FLORA Runs API
+  description: Top-level run creation endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-runs-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-technique-runs-api
+  name: FLORA Technique Runs API
+  description: Nested technique run endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Technique Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-technique-runs-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-techniques-api
+  name: FLORA Techniques API
+  description: Technique catalog endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Techniques
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-techniques-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
+- aid: flora-fauna:flora-fauna-workspaces-api
+  name: FLORA Workspaces API
+  description: Workspace discovery endpoints.
+  humanURL: https://developer.flora.ai/
+  baseURL: https://app.flora.ai/api/v1
+  tags:
+  - Workspaces
+  properties:
+  - type: OpenAPI
+    url: openapi/flora-fauna-workspaces-api-openapi.yml
+  - type: Documentation
+    url: https://developer.flora.ai/api
+  - type: APIReference
+    url: https://developer.flora.ai/reference/resources/techniques
+  - type: GettingStarted
+    url: https://developer.flora.ai/api
+  - type: Authentication
+    url: authentication/flora-fauna-authentication.yml
+  - type: ErrorCatalog
+    url: errors/flora-fauna-problem-types.yml
+  - type: DataModel
+    url: data-model/flora-fauna-data-model.yml
+  - type: Conventions
+    url: conventions/flora-fauna-conventions.yml
+  - type: RateLimits
+    url: rate-limits/flora-fauna-rate-limits.yml
 common:
   - type: OpenAPI
     url: openapi/flora-fauna-flora-api-openapi.yml
