@@ -29,6 +29,18 @@ description: >-
   idempotency keys; and a Stainless-generated developer portal at
   developer.flora.ai. API and MCP access begin on the paid Starter plan.
 type: Index
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: paid-tiers
   onboarding: self-service
