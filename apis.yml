@@ -298,6 +298,8 @@ apis:
   humanURL: https://developer.flora.ai/
   baseURL: https://app.flora.ai/api/v1
   tags:
+  - Project
+  tags_raw:
   - Projects
   properties:
   - type: OpenAPI
