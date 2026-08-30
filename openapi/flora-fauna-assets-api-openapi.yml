@@ -1,0 +1,3062 @@
+openapi: 3.2.0
+info:
+  title: Flora.ai Assets API
+  version: 1.6.0
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Proprietary
+  description: Asset upload and retrieval endpoints.
+servers:
+- url: https://app.flora.ai/api/v1
+security:
+- bearerAuth: []
+tags:
+- name: Assets
+  description: Asset upload and retrieval endpoints.
+paths:
+  /assets:
+    get:
+      operationId: listAssets
+      summary: List assets
+      description: Returns assets visible to the authenticated public API key. Filter by workspace, project canvas, search query, cursor, and limit without exposing raw file bytes or internal graph data.
+      tags:
+      - Assets
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum number of results to return
+        allowEmptyValue: true
+        allowReserved: true
+        description: Maximum number of results to return
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          description: Opaque cursor for fetching the next page
+          examples:
+          - eyJvZmZzZXQiOjIwfQ
+        allowEmptyValue: true
+        allowReserved: true
+        description: Opaque cursor for fetching the next page
+      - name: query
+        in: query
+        schema:
+          type: string
+          description: Search query
+          examples:
+          - logo
+        allowEmptyValue: true
+        allowReserved: true
+        description: Search query
+      - name: workspace_id
+        in: query
+        schema:
+          type: string
+          pattern: ^ws_\S+$
+          description: Workspace identifier
+          examples:
+          - ws_abc123
+        allowEmptyValue: true
+        allowReserved: true
+        description: Workspace identifier
+      - name: project_id
+        in: query
+        schema:
+          type: string
+          pattern: ^prj_\S+$
+          description: Project identifier
+          examples:
+          - prj_abc123
+        allowEmptyValue: true
+        allowReserved: true
+        description: Project identifier
+      responses:
+        '200':
+          description: Assets returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assets:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        asset_id:
+                          anyOf:
+                          - type: string
+                            pattern: ^asset_\S+$
+                            description: Asset identifier
+                            examples:
+                            - asset_abc123
+                          - type: 'null'
+                          description: Asset identifier
+                        name:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                          description: Asset name
+                        description:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                          description: Asset description
+                        workspace_id:
+                          anyOf:
+                          - type: string
+                            pattern: ^ws_\S+$
+                            description: Workspace identifier
+                            examples:
+                            - ws_abc123
+                          - type: 'null'
+                          description: Workspace identifier
+                        url:
+                          anyOf:
+                          - type: string
+                            format: uri
+                          - type: 'null'
+                          description: Asset URL
+                        content_type:
+                          type: string
+                          description: Asset content type
+                        upload_content_type:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                          description: Content type provided at upload time
+                        uploaded_via:
+                          type: string
+                          description: Asset source
+                        status:
+                          enum:
+                          - pending_upload
+                          - ready
+                          - failed
+                          type: string
+                        width:
+                          anyOf:
+                          - type: integer
+                          - type: 'null'
+                        height:
+                          anyOf:
+                          - type: integer
+                          - type: 'null'
+                        size_bytes:
+                          anyOf:
+                          - type: integer
+                          - type: 'null'
+                        created_at:
+                          anyOf:
+                          - type: integer
+                          - type: 'null'
+                        node_id:
+                          anyOf:
+                          - type: string
+                            description: Associated node identifier
+                            examples:
+                            - node_abc123
+                          - type: 'null'
+                          description: Associated node identifier
+                        project_id:
+                          anyOf:
+                          - type: string
+                            pattern: ^prj_\S+$
+                            description: Project identifier
+                            examples:
+                            - prj_abc123
+                          - type: 'null'
+                          description: Project identifier
+                      required:
+                      - asset_id
+                      - name
+                      - description
+                      - workspace_id
+                      - url
+                      - content_type
+                      - upload_content_type
+                      - uploaded_via
+                      - status
+                      - width
+                      - height
+                      - size_bytes
+                      - created_at
+                  meta:
+                    type: object
+                    properties:
+                      next_cursor:
+                        anyOf:
+                        - type: string
+                          description: Opaque cursor for fetching the next page
+                          examples:
+                          - eyJvZmZzZXQiOjIwfQ
+                        - type: 'null'
+                        description: Opaque cursor for fetching the next page
+                      total_estimate:
+                        anyOf:
+                        - type: integer
+                          minimum: 0
+                          description: Estimated total matching items
+                        - type: 'null'
+                        description: Estimated total matching items
+                    required:
+                    - next_cursor
+                required:
+                - assets
+                - meta
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                input_validation_error:
+                  summary: Invalid request
+                  value:
+                    error:
+                      code: input_validation_error
+                      message: 'prompt: Required'
+                      fields:
+                      - field: prompt
+                        message: Required
+        '401':
+          description: '401'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unauthorized:
+                  summary: Unauthorized
+                  value:
+                    error:
+                      code: unauthorized
+                      message: Invalid API key.
+        '402':
+          description: '402'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                insufficient_credits:
+                  summary: Insufficient credits
+                  value:
+                    error:
+                      code: insufficient_credits
+                      message: Insufficient credits.
+        '403':
+          description: '403'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                forbidden:
+                  summary: Forbidden
+                  value:
+                    error:
+                      code: forbidden
+                      message: Forbidden.
+        '404':
+          description: '404'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                not_found:
+                  summary: Not found
+                  value:
+                    error:
+                      code: not_found
+                      message: Not found.
+        '409':
+          description: '409'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                idempotency_duplicate:
+                  summary: Conflict
+                  value:
+                    error:
+                      code: idempotency_duplicate
+                      message: Duplicate idempotency key.
+        '429':
+          description: '429'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                rate_limited:
+                  summary: Rate limited
+                  value:
+                    error:
+                      code: rate_limited
+                      message: Rate limit exceeded.
+        '500':
+          description: '500'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unknown_error:
+                  summary: Unknown error
+                  value:
+                    error:
+                      code: unknown_error
+                      message: An unknown error occurred.
+    post:
+      operationId: uploadAsset
+      summary: Create an asset upload
+      description: Creates an asset from an allowlisted source URL or reserves a signed upload URL. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate.
+      tags:
+      - Assets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - source
+              - workspace_id
+              additionalProperties: false
+              properties:
+                source:
+                  type: string
+                  description: Asset source URL or signed-url upload mode
+                  examples:
+                  - signed-url
+                  - https://example.com/source.png
+                workspace_id:
+                  type: string
+                  description: Workspace identifier
+                  examples:
+                  - ws_abc123
+                folder:
+                  type: string
+                  description: Destination folder
+                  examples:
+                  - campaign-assets
+                content_type:
+                  type: string
+                  description: Asset content type
+                  examples:
+                  - image/png
+                file_name:
+                  type: string
+                  description: Asset file name
+                  examples:
+                  - hero.png
+      responses:
+        '201':
+          description: Asset upload created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  asset_id:
+                    type: string
+                    pattern: ^asset_\S+$
+                    description: Asset identifier
+                    examples:
+                    - asset_abc123
+                  uploaded_via:
+                    enum:
+                    - url
+                    - signed_url
+                    type: string
+                    description: Asset source
+                  url:
+                    type: string
+                    format: uri
+                    description: Asset URL
+                  workspace_id:
+                    type: string
+                    pattern: ^ws_\S+$
+                    description: Workspace identifier
+                    examples:
+                    - ws_abc123
+                  visibility:
+                    const: workspace
+                  status:
+                    enum:
+                    - pending_upload
+                    - ready
+                    - failed
+                    type: string
+                  upload:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        format: uri
+                        description: Upload URL
+                      method:
+                        const: POST
+                      content_type:
+                        const: multipart/form-data
+                      file_field:
+                        const: file
+                      form_fields:
+                        type: object
+                        additionalProperties:
+                          type: string
+                        description: Upload form fields
+                    required:
+                    - url
+                    - method
+                    - content_type
+                    - file_field
+                    - form_fields
+                  upload_url:
+                    type: string
+                    description: Upload URL (serialized)
+                    examples:
+                    - https://upload.imagekit.io/api/v1/files/upload
+                  expires_at:
+                    type: string
+                    format: date-time
+                    description: Expiration time for the upload URL
+                required:
+                - asset_id
+                - uploaded_via
+                - url
+                - workspace_id
+                - visibility
+                - status
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                input_validation_error:
+                  summary: Invalid request
+                  value:
+                    error:
+                      code: input_validation_error
+                      message: 'prompt: Required'
+                      fields:
+                      - field: prompt
+                        message: Required
+        '401':
+          description: '401'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unauthorized:
+                  summary: Unauthorized
+                  value:
+                    error:
+                      code: unauthorized
+                      message: Invalid API key.
+        '402':
+          description: '402'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                insufficient_credits:
+                  summary: Insufficient credits
+                  value:
+                    error:
+                      code: insufficient_credits
+                      message: Insufficient credits.
+        '403':
+          description: '403'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                forbidden:
+                  summary: Forbidden
+                  value:
+                    error:
+                      code: forbidden
+                      message: Forbidden.
+        '404':
+          description: '404'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                not_found:
+                  summary: Not found
+                  value:
+                    error:
+                      code: not_found
+                      message: Not found.
+        '409':
+          description: '409'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                idempotency_duplicate:
+                  summary: Conflict
+                  value:
+                    error:
+                      code: idempotency_duplicate
+                      message: Duplicate idempotency key.
+        '429':
+          description: '429'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                rate_limited:
+                  summary: Rate limited
+                  value:
+                    error:
+                      code: rate_limited
+                      message: Rate limit exceeded.
+        '500':
+          description: '500'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unknown_error:
+                  summary: Unknown error
+                  value:
+                    error:
+                      code: unknown_error
+                      message: An unknown error occurred.
+  /assets/{assetId}:
+    get:
+      operationId: getAsset
+      summary: Get an asset
+      description: Returns metadata for one asset when it is accessible to the authenticated public API key. Missing and inaccessible assets both return 404.
+      tags:
+      - Assets
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^asset_\S+$
+          description: Asset identifier
+          examples:
+          - asset_abc123
+        description: Asset identifier
+      responses:
+        '200':
+          description: Asset returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  asset_id:
+                    type: string
+                    pattern: ^asset_\S+$
+                    description: Asset identifier
+                    examples:
+                    - asset_abc123
+                  name:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                    description: Asset name
+                  description:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                    description: Asset description
+                  workspace_id:
+                    anyOf:
+                    - type: string
+                      pattern: ^ws_\S+$
+                      description: Workspace identifier
+                      examples:
+                      - ws_abc123
+                    - type: 'null'
+                    description: Workspace identifier
+                  url:
+                    anyOf:
+                    - type: string
+                      format: uri
+                    - type: 'null'
+                    description: Asset URL
+                  content_type:
+                    type: string
+                    description: Asset content type
+                  upload_content_type:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                    description: Content type provided at upload time
+                  size_bytes:
+                    anyOf:
+                    - type: integer
+                    - type: 'null'
+                  uploaded_via:
+                    type: string
+                    description: Asset source
+                  created_at:
+                    anyOf:
+                    - type: string
+                      format: date-time
+                    - type: 'null'
+                    description: Asset creation time (ISO 8601 datetime)
+                  status:
+                    enum:
+                    - pending_upload
+                    - ready
+                    - failed
+                    type: string
+                  failure_message:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                    description: Failure message when the asset is in failed status
+                  width:
+                    anyOf:
+                    - type: integer
+                    - type: 'null'
+                  height:
+                    anyOf:
+                    - type: integer
+                    - type: 'null'
+                required:
+                - asset_id
+                - name
+                - description
+                - workspace_id
+                - url
+                - content_type
+                - upload_content_type
+                - size_bytes
+                - uploaded_via
+                - created_at
+                - status
+                - failure_message
+                - width
+                - height
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                input_validation_error:
+                  summary: Invalid request
+                  value:
+                    error:
+                      code: input_validation_error
+                      message: 'prompt: Required'
+                      fields:
+                      - field: prompt
+                        message: Required
+        '401':
+          description: '401'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unauthorized:
+                  summary: Unauthorized
+                  value:
+                    error:
+                      code: unauthorized
+                      message: Invalid API key.
+        '402':
+          description: '402'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                insufficient_credits:
+                  summary: Insufficient credits
+                  value:
+                    error:
+                      code: insufficient_credits
+                      message: Insufficient credits.
+        '403':
+          description: '403'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                forbidden:
+                  summary: Forbidden
+                  value:
+                    error:
+                      code: forbidden
+                      message: Forbidden.
+        '404':
+          description: '404'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                not_found:
+                  summary: Not found
+                  value:
+                    error:
+                      code: not_found
+                      message: Not found.
+        '409':
+          description: '409'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                idempotency_duplicate:
+                  summary: Conflict
+                  value:
+                    error:
+                      code: idempotency_duplicate
+                      message: Duplicate idempotency key.
+        '429':
+          description: '429'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                rate_limited:
+                  summary: Rate limited
+                  value:
+                    error:
+                      code: rate_limited
+                      message: Rate limit exceeded.
+        '500':
+          description: '500'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unknown_error:
+                  summary: Unknown error
+                  value:
+                    error:
+                      code: unknown_error
+                      message: An unknown error occurred.
+  /assets/{assetId}/complete:
+    post:
+      operationId: completeAssetUpload
+      summary: Complete a signed asset upload
+      description: Marks a signed asset upload as complete after the file has been uploaded. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate.
+      tags:
+      - Assets
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^asset_\S+$
+          description: Asset identifier
+          examples:
+          - asset_abc123
+        description: Asset identifier
+      responses:
+        '200':
+          description: Asset upload completed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  asset_id:
+                    type: string
+                    pattern: ^asset_\S+$
+                    description: Asset identifier
+                    examples:
+                    - asset_abc123
+                  url:
+                    anyOf:
+                    - type: string
+                      format: uri
+                    - type: 'null'
+                    description: Asset URL
+                  workspace_id:
+                    anyOf:
+                    - type: string
+                      pattern: ^ws_\S+$
+                      description: Workspace identifier
+                      examples:
+                      - ws_abc123
+                    - type: 'null'
+                    description: Workspace identifier
+                  visibility:
+                    const: workspace
+                  status:
+                    enum:
+                    - pending_upload
+                    - ready
+                    - failed
+                    type: string
+                  failure_message:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                    description: Failure message when the asset is in failed status
+                  upload:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        format: uri
+                        description: Upload URL
+                      method:
+                        const: POST
+                      content_type:
+                        const: multipart/form-data
+                      file_field:
+                        const: file
+                      form_fields:
+                        type: object
+                        additionalProperties:
+                          type: string
+                        description: Upload form fields
+                    required:
+                    - url
+                    - method
+                    - content_type
+                    - file_field
+                    - form_fields
+                  upload_url:
+                    type: string
+                    description: Upload URL (serialized)
+                    examples:
+                    - https://upload.imagekit.io/api/v1/files/upload
+                  expires_at:
+                    type: string
+                    format: date-time
+                    description: Expiration time for the upload URL
+                required:
+                - asset_id
+                - url
+                - workspace_id
+                - visibility
+                - status
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                input_validation_error:
+                  summary: Invalid request
+                  value:
+                    error:
+                      code: input_validation_error
+                      message: 'prompt: Required'
+                      fields:
+                      - field: prompt
+                        message: Required
+        '401':
+          description: '401'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unauthorized:
+                  summary: Unauthorized
+                  value:
+                    error:
+                      code: unauthorized
+                      message: Invalid API key.
+        '402':
+          description: '402'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                insufficient_credits:
+                  summary: Insufficient credits
+                  value:
+                    error:
+                      code: insufficient_credits
+                      message: Insufficient credits.
+        '403':
+          description: '403'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                forbidden:
+                  summary: Forbidden
+                  value:
+                    error:
+                      code: forbidden
+                      message: Forbidden.
+        '404':
+          description: '404'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                not_found:
+                  summary: Not found
+                  value:
+                    error:
+                      code: not_found
+                      message: Not found.
+        '409':
+          description: '409'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                idempotency_duplicate:
+                  summary: Conflict
+                  value:
+                    error:
+                      code: idempotency_duplicate
+                      message: Duplicate idempotency key.
+        '429':
+          description: '429'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                rate_limited:
+                  summary: Rate limited
+                  value:
+                    error:
+                      code: rate_limited
+                      message: Rate limit exceeded.
+        '500':
+          description: '500'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unknown_error:
+                  summary: Unknown error
+                  value:
+                    error:
+                      code: unknown_error
+                      message: An unknown error occurred.
+  /assets/{assetId}/retry:
+    post:
+      operationId: retryAssetUpload
+      summary: Retry a signed asset upload
+      description: Creates a fresh signed upload reservation for a failed or expired asset upload. Mutating public API requests support an optional Idempotency-Key header for client retries; duplicate keys within two hours return idempotency_duplicate.
+      tags:
+      - Assets
+      parameters:
+      - name: assetId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^asset_\S+$
+          description: Asset identifier
+          examples:
+          - asset_abc123
+        description: Asset identifier
+      responses:
+        '200':
+          description: Asset upload retry created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  asset_id:
+                    type: string
+                    pattern: ^asset_\S+$
+                    description: Asset identifier
+                    examples:
+                    - asset_abc123
+                  url:
+                    anyOf:
+                    - type: string
+                      format: uri
+                    - type: 'null'
+                    description: Asset URL
+                  workspace_id:
+                    anyOf:
+                    - type: string
+                      pattern: ^ws_\S+$
+                      description: Workspace identifier
+                      examples:
+                      - ws_abc123
+                    - type: 'null'
+                    description: Workspace identifier
+                  visibility:
+                    const: workspace
+                  status:
+                    enum:
+                    - pending_upload
+                    - ready
+                    - failed
+                    type: string
+                  failure_message:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                    description: Failure message when the asset is in failed status
+                  upload:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        format: uri
+                        description: Upload URL
+                      method:
+                        const: POST
+                      content_type:
+                        const: multipart/form-data
+                      file_field:
+                        const: file
+                      form_fields:
+                        type: object
+                        additionalProperties:
+                          type: string
+                        description: Upload form fields
+                    required:
+                    - url
+                    - method
+                    - content_type
+                    - file_field
+                    - form_fields
+                  upload_url:
+                    type: string
+                    description: Upload URL (serialized)
+                    examples:
+                    - https://upload.imagekit.io/api/v1/files/upload
+                  expires_at:
+                    type: string
+                    format: date-time
+                    description: Expiration time for the upload URL
+                required:
+                - asset_id
+                - url
+                - workspace_id
+                - visibility
+                - status
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                input_validation_error:
+                  summary: Invalid request
+                  value:
+                    error:
+                      code: input_validation_error
+                      message: 'prompt: Required'
+                      fields:
+                      - field: prompt
+                        message: Required
+        '401':
+          description: '401'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unauthorized:
+                  summary: Unauthorized
+                  value:
+                    error:
+                      code: unauthorized
+                      message: Invalid API key.
+        '402':
+          description: '402'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                insufficient_credits:
+                  summary: Insufficient credits
+                  value:
+                    error:
+                      code: insufficient_credits
+                      message: Insufficient credits.
+        '403':
+          description: '403'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                forbidden:
+                  summary: Forbidden
+                  value:
+                    error:
+                      code: forbidden
+                      message: Forbidden.
+        '404':
+          description: '404'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                not_found:
+                  summary: Not found
+                  value:
+                    error:
+                      code: not_found
+                      message: Not found.
+        '409':
+          description: '409'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                idempotency_duplicate:
+                  summary: Conflict
+                  value:
+                    error:
+                      code: idempotency_duplicate
+                      message: Duplicate idempotency key.
+        '429':
+          description: '429'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                rate_limited:
+                  summary: Rate limited
+                  value:
+                    error:
+                      code: rate_limited
+                      message: Rate limit exceeded.
+        '500':
+          description: '500'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unknown_error:
+                  summary: Unknown error
+                  value:
+                    error:
+                      code: unknown_error
+                      message: An unknown error occurred.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Flora API key

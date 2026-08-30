@@ -1,0 +1,1558 @@
+openapi: 3.2.0
+info:
+  title: Flora.ai Techniques API
+  version: 1.6.0
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Proprietary
+  description: Technique catalog endpoints.
+servers:
+- url: https://app.flora.ai/api/v1
+security:
+- bearerAuth: []
+tags:
+- name: Techniques
+  description: Technique catalog endpoints.
+paths:
+  /techniques:
+    get:
+      operationId: listTechniques
+      summary: List techniques
+      description: Returns reusable Flora techniques visible to the authenticated public API key. Use workspace_id, query, cursor, and limit to filter the catalog.
+      tags:
+      - Techniques
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Maximum number of results to return
+        allowEmptyValue: true
+        allowReserved: true
+        description: Maximum number of results to return
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          description: Opaque cursor for fetching the next page
+          examples:
+          - eyJvZmZzZXQiOjIwfQ
+        allowEmptyValue: true
+        allowReserved: true
+        description: Opaque cursor for fetching the next page
+      - name: query
+        in: query
+        schema:
+          type: string
+          description: Search query
+          examples:
+          - logo
+        allowEmptyValue: true
+        allowReserved: true
+        description: Search query
+      - name: workspace_id
+        in: query
+        schema:
+          type: string
+          pattern: ^ws_\S+$
+          description: Workspace identifier
+          examples:
+          - ws_abc123
+        allowEmptyValue: true
+        allowReserved: true
+        description: Workspace identifier
+      responses:
+        '200':
+          description: Techniques returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  techniques:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        technique_id:
+                          type: string
+                          pattern: ^tech_\S+$
+                          description: Technique identifier
+                          examples:
+                          - tech_abcd1234
+                        name:
+                          type: string
+                          description: Technique name
+                          examples:
+                          - Editorial Image Grid
+                        description:
+                          type: string
+                          description: Technique description
+                          examples:
+                          - Generate a cohesive editorial image grid.
+                        run_cost:
+                          type: number
+                          minimum: 0
+                          description: Cost per run in USD
+                        inputs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: Technique input or output identifier
+                                examples:
+                                - prompt
+                              name:
+                                type: string
+                                description: Technique input or output display name
+                                examples:
+                                - Prompt
+                              type:
+                                enum:
+                                - imageUrl
+                                - videoUrl
+                                - audioUrl
+                                - text
+                                - documentUrl
+                                type: string
+                                description: Technique input or output media type
+                              description:
+                                type: string
+                                description: Technique input or output description
+                                examples:
+                                - Describe the desired image.
+                              specified_aspect_ratio:
+                                type: string
+                                description: Required aspect ratio
+                                examples:
+                                - '1:1'
+                              specified_duration:
+                                type: number
+                                description: Required duration in seconds
+                            required:
+                            - id
+                            - name
+                            - type
+                        outputs:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: Technique input or output identifier
+                                examples:
+                                - prompt
+                              name:
+                                type: string
+                                description: Technique input or output display name
+                                examples:
+                                - Prompt
+                              type:
+                                enum:
+                                - imageUrl
+                                - videoUrl
+                                - audioUrl
+                                - text
+                                - documentUrl
+                                type: string
+                                description: Technique input or output media type
+                              description:
+                                type: string
+                                description: Technique input or output description
+                                examples:
+                                - Describe the desired image.
+                              specified_aspect_ratio:
+                                type: string
+                                description: Required aspect ratio
+                                examples:
+                                - '1:1'
+                              specified_duration:
+                                type: number
+                                description: Required duration in seconds
+                            required:
+                            - id
+                            - name
+                            - type
+                      required:
+                      - technique_id
+                      - name
+                      - run_cost
+                      - inputs
+                      - outputs
+                  meta:
+                    type: object
+                    properties:
+                      next_cursor:
+                        anyOf:
+                        - type: string
+                          description: Opaque cursor for fetching the next page
+                          examples:
+                          - eyJvZmZzZXQiOjIwfQ
+                        - type: 'null'
+                        description: Opaque cursor for fetching the next page
+                      total_estimate:
+                        anyOf:
+                        - type: integer
+                          minimum: 0
+                          description: Estimated total matching items
+                        - type: 'null'
+                        description: Estimated total matching items
+                    required:
+                    - next_cursor
+                required:
+                - techniques
+                - meta
+              examples:
+                availableTechniques:
+                  summary: Available techniques
+                  value:
+                    techniques:
+                    - technique_id: tech_art-directors-critique
+                      name: Art Director's Critique
+                      description: Analyze, critique, and redesign any creative asset.
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_auto-translate
+                      name: Auto Translate
+                      description: Translate text in images instantly
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_book-drop
+                      name: Book Drop
+                      description: Mocks up front and back book covers
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_cctv-cam
+                      name: CCTV Cam
+                      description: Any face, CCTV style
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_character-lock
+                      name: Character Lock
+                      description: One character, 6 different angles
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_cinematic-movie-generator
+                      name: Cinematic Movie Stills
+                      description: Generate film-quality scene stills
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_color-mapping
+                      name: Segment Mapper
+                      description: Color-codes every element in your image
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_color-transfer
+                      name: Color Transfer
+                      description: Apply color grading from any reference
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_earth-zoom-out
+                      name: Earth Zoom Out
+                      description: Zoom out to space from any scene
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_facade-swap
+                      name: Facade Swap
+                      description: Reskin buildings with new materials
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_fit-checks
+                      name: Fit Check
+                      description: Extract outfits & swap onto new looks
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_glam-shots
+                      name: Glam Shots
+                      description: Create polished makeup ads instantly
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_icon-pack
+                      name: Icon Pack
+                      description: Generate matched icon sets from a prompt
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_live-like-an-amsterdammer
+                      name: Live like an Amsterdammer
+                      description: Places you into everyday Amsterdam scenes
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_location-scouter
+                      name: Location Scout
+                      description: Scouts five views from a single location
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_logo-stylist
+                      name: Logo Stylist
+                      description: Stylize any logo with a new visual twist
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_memoji-me
+                      name: Memoji Me
+                      description: Turn any face into a custom memoji
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_moodboard-maker
+                      name: Mood Board Maker
+                      description: Eclectic mood board from a photo
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_mugshot
+                      name: Mugshot
+                      description: Turn any portrait into a mugshot
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_palette-pull
+                      name: Palette Pull
+                      description: Extract color palettes from any image
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_product-animator
+                      name: Product Animator
+                      description: Animate your product
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_product-lookbook-grid
+                      name: Product Lookbook Grid
+                      description: Turn products into styled grid layouts
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_product-motion
+                      name: Product Motion
+                      description: Animate product shots in one click
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_quick-reframe
+                      name: Layout Resizer
+                      description: Resize layouts for any aspect ratio
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_relight-technique
+                      name: Relighting
+                      description: Relights your photo
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_room-render
+                      name: Room Render
+                      description: Turn floor plans into realistic rooms
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_seamless-transition
+                      name: Seamless Transition
+                      description: Animate between any two frames
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_sigil
+                      name: Sigil
+                      description: Turns any image into an animated glyph
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_sketch-to-garment
+                      name: Garment Sketch
+                      description: One sketch, one final garment.
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_studio-blur
+                      name: Studio Blur
+                      description: Add pro depth-of-field blur to photos
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_studio-shot
+                      name: Studio Shot
+                      description: Turns any product into a studio-lit shoot
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_tarot-pull
+                      name: Tarot Pull
+                      description: Custom illustrated tarot card readings
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_texture-matchers
+                      name: Texture Match
+                      description: Replicate textures & colors across assets
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_turn-any-product-into-4-ad-visuals
+                      name: Turn any product into 4 ad visuals
+                      description: Make a full ad campaign from 1 product
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_ugc-creation
+                      name: UGC Creator
+                      description: Casual, phone-shot clips of your product
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_video-scene-builder
+                      name: Video Scene Builder
+                      description: Compose video scenes from still assets
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_wireframe
+                      name: Photo Wireframe
+                      description: Turn any photo into a clean wireframe
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    - technique_id: tech_wonder-fy
+                      name: Wonder(fy)
+                      description: Apply Wonder's cinematic style to images
+                      run_cost: 0
+                      inputs: []
+                      outputs: []
+                    meta:
+                      next_cursor: null
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                input_validation_error:
+                  summary: Invalid request
+                  value:
+                    error:
+                      code: input_validation_error
+                      message: 'prompt: Required'
+                      fields:
+                      - field: prompt
+                        message: Required
+        '401':
+          description: '401'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unauthorized:
+                  summary: Unauthorized
+                  value:
+                    error:
+                      code: unauthorized
+                      message: Invalid API key.
+        '402':
+          description: '402'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                insufficient_credits:
+                  summary: Insufficient credits
+                  value:
+                    error:
+                      code: insufficient_credits
+                      message: Insufficient credits.
+        '403':
+          description: '403'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                forbidden:
+                  summary: Forbidden
+                  value:
+                    error:
+                      code: forbidden
+                      message: Forbidden.
+        '404':
+          description: '404'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                not_found:
+                  summary: Not found
+                  value:
+                    error:
+                      code: not_found
+                      message: Not found.
+        '409':
+          description: '409'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                idempotency_duplicate:
+                  summary: Conflict
+                  value:
+                    error:
+                      code: idempotency_duplicate
+                      message: Duplicate idempotency key.
+        '429':
+          description: '429'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                rate_limited:
+                  summary: Rate limited
+                  value:
+                    error:
+                      code: rate_limited
+                      message: Rate limit exceeded.
+        '500':
+          description: '500'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unknown_error:
+                  summary: Unknown error
+                  value:
+                    error:
+                      code: unknown_error
+                      message: An unknown error occurred.
+  /techniques/{techniqueId}:
+    get:
+      operationId: getTechnique
+      summary: Get a technique
+      description: Returns the public definition for one technique, including its input and output schema used to start runs.
+      tags:
+      - Techniques
+      parameters:
+      - name: techniqueId
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          description: Technique identifier or slug
+          examples:
+          - art-directors-critique
+          - auto-translate
+          - book-drop
+          - cctv-cam
+          - character-lock
+          - cinematic-movie-generator
+          - color-mapping
+          - color-transfer
+          pattern: ^\S+$
+        description: Technique identifier or slug
+      responses:
+        '200':
+          description: Technique returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  technique_id:
+                    type: string
+                    pattern: ^tech_\S+$
+                    description: Technique identifier
+                    examples:
+                    - tech_abcd1234
+                  name:
+                    type: string
+                    description: Technique name
+                    examples:
+                    - Editorial Image Grid
+                  description:
+                    type: string
+                    description: Technique description
+                    examples:
+                    - Generate a cohesive editorial image grid.
+                  run_cost:
+                    type: number
+                    minimum: 0
+                    description: Cost per run in USD
+                  inputs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Technique input or output identifier
+                          examples:
+                          - prompt
+                        name:
+                          type: string
+                          description: Technique input or output display name
+                          examples:
+                          - Prompt
+                        type:
+                          enum:
+                          - imageUrl
+                          - videoUrl
+                          - audioUrl
+                          - text
+                          - documentUrl
+                          type: string
+                          description: Technique input or output media type
+                        description:
+                          type: string
+                          description: Technique input or output description
+                          examples:
+                          - Describe the desired image.
+                        specified_aspect_ratio:
+                          type: string
+                          description: Required aspect ratio
+                          examples:
+                          - '1:1'
+                        specified_duration:
+                          type: number
+                          description: Required duration in seconds
+                      required:
+                      - id
+                      - name
+                      - type
+                  outputs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Technique input or output identifier
+                          examples:
+                          - prompt
+                        name:
+                          type: string
+                          description: Technique input or output display name
+                          examples:
+                          - Prompt
+                        type:
+                          enum:
+                          - imageUrl
+                          - videoUrl
+                          - audioUrl
+                          - text
+                          - documentUrl
+                          type: string
+                          description: Technique input or output media type
+                        description:
+                          type: string
+                          description: Technique input or output description
+                          examples:
+                          - Describe the desired image.
+                        specified_aspect_ratio:
+                          type: string
+                          description: Required aspect ratio
+                          examples:
+                          - '1:1'
+                        specified_duration:
+                          type: number
+                          description: Required duration in seconds
+                      required:
+                      - id
+                      - name
+                      - type
+                required:
+                - technique_id
+                - name
+                - run_cost
+                - inputs
+                - outputs
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                input_validation_error:
+                  summary: Invalid request
+                  value:
+                    error:
+                      code: input_validation_error
+                      message: 'prompt: Required'
+                      fields:
+                      - field: prompt
+                        message: Required
+        '401':
+          description: '401'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unauthorized:
+                  summary: Unauthorized
+                  value:
+                    error:
+                      code: unauthorized
+                      message: Invalid API key.
+        '402':
+          description: '402'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                insufficient_credits:
+                  summary: Insufficient credits
+                  value:
+                    error:
+                      code: insufficient_credits
+                      message: Insufficient credits.
+        '403':
+          description: '403'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                forbidden:
+                  summary: Forbidden
+                  value:
+                    error:
+                      code: forbidden
+                      message: Forbidden.
+        '404':
+          description: '404'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                not_found:
+                  summary: Not found
+                  value:
+                    error:
+                      code: not_found
+                      message: Not found.
+        '409':
+          description: '409'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                idempotency_duplicate:
+                  summary: Conflict
+                  value:
+                    error:
+                      code: idempotency_duplicate
+                      message: Duplicate idempotency key.
+        '429':
+          description: '429'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                rate_limited:
+                  summary: Rate limited
+                  value:
+                    error:
+                      code: rate_limited
+                      message: Rate limit exceeded.
+        '500':
+          description: '500'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - error
+                additionalProperties: false
+                properties:
+                  error:
+                    type: object
+                    required:
+                    - code
+                    - message
+                    additionalProperties: false
+                    properties:
+                      code:
+                        type: string
+                        enum:
+                        - unauthorized
+                        - invalid_api_key
+                        - forbidden
+                        - invalid_json
+                        - input_validation_error
+                        - not_found
+                        - insufficient_credits
+                        - idempotency_duplicate
+                        - rate_limited
+                        - unknown_error
+                        examples:
+                        - input_validation_error
+                      message:
+                        type: string
+                        examples:
+                        - 'name: Required'
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - field
+                          - message
+                          additionalProperties: false
+                          properties:
+                            field:
+                              type: string
+                              examples:
+                              - name
+                            message:
+                              type: string
+                              examples:
+                              - Required
+              examples:
+                unknown_error:
+                  summary: Unknown error
+                  value:
+                    error:
+                      code: unknown_error
+                      message: An unknown error occurred.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Flora API key
