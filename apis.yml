@@ -50,11 +50,12 @@ accessModel:
   label: Paid API on a subscription plan
   confidence: high
   source:
+    - {url: 'https://www.florafauna.ai', status: 301, note: 'declared website redirects to https://flora.ai/ — a different registrable domain (florafauna.ai -> flora.ai), possible rename or acquisition (probed 2026-09-03, roadmap#169)'}
     - https://developer.flora.ai/api
     - https://docs.flora.ai/plans-and-billing/pricing
   generated: '2026-08-12'
   method: searched
-position: Provider
+position: Producing
 access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/flora-fauna.png
 tags:
