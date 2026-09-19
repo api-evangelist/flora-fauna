@@ -398,6 +398,8 @@ apis:
   humanURL: https://developer.flora.ai/
   baseURL: https://app.flora.ai/api/v1
   tags:
+  - Workspace
+  tags_raw:
   - Workspaces
   properties:
   - type: OpenAPI
