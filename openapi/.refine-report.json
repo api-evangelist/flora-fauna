@@ -1,0 +1,40 @@
+{
+  "provider": "flora-fauna",
+  "sources": [
+    "_original/flora-fauna-flora-api-openapi.yml"
+  ],
+  "outputs": [
+    "flora-fauna-actions-api-openapi.yml",
+    "flora-fauna-assets-api-openapi.yml",
+    "flora-fauna-canvas-api-openapi.yml",
+    "flora-fauna-feedback-api-openapi.yml",
+    "flora-fauna-generations-api-openapi.yml",
+    "flora-fauna-models-api-openapi.yml",
+    "flora-fauna-projects-api-openapi.yml",
+    "flora-fauna-runs-api-openapi.yml",
+    "flora-fauna-technique-runs-api-openapi.yml",
+    "flora-fauna-techniques-api-openapi.yml",
+    "flora-fauna-workspaces-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "flora-fauna-flora-api-openapi.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "flora-fauna-actions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-assets-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-canvas-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-feedback-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-generations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-models-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-projects-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-runs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-technique-runs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-techniques-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flora-fauna-workspaces-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
