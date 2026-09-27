@@ -58,7 +58,7 @@ tags:
 - Infinite Canvas
 - Node-Based Workflows
 - Creative Workspace
-- Image-Generation
+- Image Generation
 - Video Generation
 - Text-to-Image
 - Text-to-Video
@@ -66,18 +66,10 @@ tags:
 - Multimodal AI
 - Design Tools
 - Creative Professionals
-- Advertising
-- Film
-- Fashion
-- Branding
-- VFX
-- Photography
-- Architecture
-- Motion Design
 - FAUNA
 - MCP
 - Agent Tools
-- Workflow-Automation
+- Workflow Automation
 tags_raw:
 - Creative AI
 - Generative AI
@@ -92,18 +84,12 @@ tags_raw:
 - Multimodal AI
 - Design Tools
 - Creative Professionals
-- Advertising
-- Film
-- Fashion
-- Branding
-- VFX
-- Photography
-- Architecture
-- Motion Design
 - FAUNA
 - MCP
 - Agent Tools
 - Workflow Automation
+- Image-Generation
+- Workflow-Automation
 url: https://raw.githubusercontent.com/api-evangelist/flora-fauna/refs/heads/main/apis.yml
 created: '2026-05-25'
 modified: '2026-09-16'
@@ -525,3 +511,13 @@ x-enrichment:
   status: enriched
   artifacts_added: 31
   pass: local-v1
+x-served-markets: 'Advertising, Film, Fashion, Branding, VFX, Photography, Architecture, Motion Design (markets FLORA serves, not what it is; moved out of tags per roadmap#567)'
+x-tags-removed:
+- Advertising
+- Film
+- Fashion
+- Branding
+- VFX
+- Photography
+- Architecture
+- Motion Design
