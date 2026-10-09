@@ -140,3 +140,16 @@ deployment:
   probe: gated
   checked: '2026-08-12'
   source: catalog MCP census
+rfc9728:
+  endpoint: https://agents.flora.ai/mcp
+  metadata_url: https://agents.flora.ai/.well-known/oauth-protected-resource/mcp
+  discovered_via: WWW-Authenticate resource_metadata on an anonymous POST initialize
+  fetched: '2026-09-25'
+  http_status: 200
+  content_type: application/json
+  document:
+    resource: https://agents.flora.ai/mcp
+    authorization_servers:
+    - https://agents.flora.ai
+    bearer_methods_supported:
+    - header
