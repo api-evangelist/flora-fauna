@@ -1,4 +1,4 @@
-# flora-fauna
+# FLORA
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,4 +64,161 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-FLORA — Brooklyn-based AI infinite-canvas creative workspace unifying 50+ image, video, and reasoning models behind a node-based visual workflow editor and the FAUNA creative agent.
+FLORA is a Brooklyn, New York-based applied AI / HCI company building a browser-based "infinite canvas" creative workspace for professional creators. Founded in 2024 by Weber Wong out of NYU's Interactive Telecommunications Program (ITP), FLORA unifies 50+ third-party text, image, and video AI models inside a single node-based visual workspace where designers, filmmakers, photographers, and creative agencies wire prompts, references, characters, and outputs into reusable generative workflows called Techniques. The platform integrates leading image models (FLUX.2, FLUX Kontext, Stable Diffusion 3.5, Nano Banana, Recraft, Seedream, Minimax Hailuo) and video models (Veo 3, Sora 2, Runway Gen-4 Turbo / Gen-3 Alpha / Act-Two, Pika, Kling, Luma Ray 2, Seedance, Marey) alongside reasoning models such as Gemini 3 Pro and GPT-5.4, and ships a creative agent named FAUNA for ideation, iteration, and workflow scaffolding. FLORA is used at agencies and studios including Pentagram, Milk, and MSCHF; the company raised a $6.5M seed led by Mike Volpi at Hanabi Capital with Menlo Ventures, a16z Games Speedrun, Long Journey Ventures, Company Ventures, Alumni Ventures, Embedding VC, and angels including Justin Kan (Twitch) and Gabe Whaley (MSCHF), and operates in-person from the Domino Refinery in Williamsburg. Beyond the canvas FLORA now ships a public developer surface: the Flora.ai REST API (OpenAPI 3.1.1, base https://app.flora.ai/api/v1) for running Techniques, one-off generations, assets, projects, canvas patches and actions programmatically; a hosted remote MCP server at https://agents.flora.ai/mcp exposing two tools (search_docs, execute) over OAuth 2.1 + PKCE; first-party TypeScript and Go SDKs and a Go CLI; signed HMAC-SHA256 run webhooks; idempotency keys; and a Stainless-generated developer portal at developer.flora.ai. API and MCP access begin on the paid Starter plan.
+
+**Areas:** Creative AI · Generative AI · Infinite Canvas · Node-Based Workflows · Creative Workspace · Image Generation · Video Generation · AI Agents · Multimodal AI · Design Tools · Creative Professionals · FAUNA
+
+## FLORA on APIs.io
+
+Everything profiled for FLORA is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/flora-fauna/](https://apis.io/providers/flora-fauna/)** — or go straight to one of the APIs or properties below.
+
+### APIs (12)
+
+- [FLORA MCP Server](https://apis.io/apis/flora-fauna/flora-mcp/) — FLORA's hosted remote Model Context Protocol server. Streamable HTTP at https://agents.flora.ai/mcp, authenticated with OAuth 2.1 + PKCE (RFC 8414…
+- [FLORA Actions API](https://apis.io/apis/flora-fauna/flora-fauna-actions-api/) — Prebuilt action catalog endpoints.
+- [FLORA Assets API](https://apis.io/apis/flora-fauna/flora-fauna-assets-api/) — Asset upload and retrieval endpoints.
+- [FLORA Canvas API](https://apis.io/apis/flora-fauna/flora-fauna-canvas-api/) — Project canvas endpoints.
+- [FLORA Feedback API](https://apis.io/apis/flora-fauna/flora-fauna-feedback-api/) — Product feedback endpoints.
+- [FLORA Generations API](https://apis.io/apis/flora-fauna/flora-fauna-generations-api/) — Generation endpoints.
+- [FLORA Models API](https://apis.io/apis/flora-fauna/flora-fauna-models-api/) — Model catalog endpoints.
+- [FLORA Projects API](https://apis.io/apis/flora-fauna/flora-fauna-projects-api/) — Project management endpoints.
+- [FLORA Runs API](https://apis.io/apis/flora-fauna/flora-fauna-runs-api/) — Top-level run creation endpoints.
+- [FLORA Technique Runs API](https://apis.io/apis/flora-fauna/flora-fauna-technique-runs-api/) — Nested technique run endpoints.
+- [FLORA Techniques API](https://apis.io/apis/flora-fauna/flora-fauna-techniques-api/) — Technique catalog endpoints.
+- [FLORA Workspaces API](https://apis.io/apis/flora-fauna/flora-fauna-workspaces-api/) — Workspace discovery endpoints.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Flora Fauna Webhooks](https://apis.io/asyncapis/flora-fauna/flora-fauna-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [flora](https://apis.io/servers/flora-fauna/flora/)
+
+#### Collections (1)
+
+Postman and Open Collection request collections.
+
+- [Flora.ai API](https://apis.io/collections/flora-fauna/open-flora-fauna-flora-api/)
+
+#### Overlays (12)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Flora Fauna Actions Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-actions-api-phrasing-overlay/)
+- [Flora Fauna Assets Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-assets-api-phrasing-overlay/)
+- [Flora Fauna Canvas Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-canvas-api-phrasing-overlay/)
+- [Flora Fauna Feedback Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-feedback-api-phrasing-overlay/)
+- [Flora Fauna Flora Api Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-flora-api-overlay/)
+- [Flora Fauna Generations Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-generations-api-phrasing-overlay/)
+- [Flora Fauna Models Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-models-api-phrasing-overlay/)
+- [Flora Fauna Projects Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-projects-api-phrasing-overlay/)
+- [Flora Fauna Runs Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-runs-api-phrasing-overlay/)
+- [Flora Fauna Technique Runs Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-technique-runs-api-phrasing-overlay/)
+- [Flora Fauna Techniques Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-techniques-api-phrasing-overlay/)
+- [Flora Fauna Workspaces Api Phrasing Overlay](https://apis.io/overlays/flora-fauna/flora-fauna-workspaces-api-phrasing-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Flora Fauna Authentication](https://apis.io/security/flora-fauna/flora-fauna-authentication/)
+- [Flora Fauna Domain Security](https://apis.io/security/flora-fauna/flora-fauna-domain-security/)
+- [Flora Fauna Trust Center](https://apis.io/security/flora-fauna/flora-fauna-trust-center/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Flora Fauna Scopes](https://apis.io/scopes/flora-fauna/flora-fauna-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Flora Fauna Plans Pricing](https://apis.io/plans/flora-fauna/flora-fauna-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Flora Fauna Rate Limits](https://apis.io/rate-limits/flora-fauna/flora-fauna-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.florafauna.ai)
+- [Documentation](https://docs.flora.ai)
+- [Getting started](https://developer.flora.ai/api)
+- [API reference](https://developer.flora.ai/reference/resources/techniques)
+- [Pricing](https://flora.ai/pricing)
+- [Sign up](https://app.flora.ai)
+- [Blog](https://flora.ai/blog)
+- [Terms of service](https://flora.ai/legal/terms-of-service)
+- [Privacy policy](https://docs.flora.ai/legal/privacy-policy)
+- [GitHub](https://github.com/florafauna-ai)
+- [Status](https://status.flora.ai)
+
+## API Evangelist rating
+
+**Kin Score 67.3** — exemplar · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 58.8 |
+| Contract governance | 18.2 |
+| Operational transparency | 42.1 |
+| Developer ergonomics | 70.8 |
+| Access clarity | 92.1 |
+
+**Agent readiness 63.2** — agent-native
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | served (partial credit) |
+| Idempotency | verified |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 36.4** — AI & Biometrics
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/flora-fauna/](https://apis.io/providers/flora-fauna/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for FLORA: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/flora-fauna/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
